@@ -1,0 +1,20 @@
+<nav>
+    <div class="nav nav-tabs" role="tablist">
+        <a class="nav-item nav-link active" data-toggle="tab" href="#tab1" role="tab">Tab 1</a>
+        <a class="nav-item nav-link" data-toggle="tab" href="#tab2" role="tab">Tab 2</a>
+    </div>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="tab1" role="tabpanel">
+            Tab 1 Content
+        </div>
+        <div class="tab-pane fade" id="tab2" role="tabpanel">
+            Tab 2 Content
+        </div>
+    </div>
+</nav>
+<div class="adminPanel" *ngIf="isEditOn()">
+    <button *ngIf="!pageContent.editing" class="btn btn-sm btn-danger adminButton" (click)="deleteContent()">
+        <i class="fas fa-trash-alt"></i> Delete
+    </button>
+</div>

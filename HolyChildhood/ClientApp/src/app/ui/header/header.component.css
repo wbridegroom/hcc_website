@@ -1,0 +1,16 @@
+.header1 {
+    background-color: #0d1d32;
+    color: white;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.header2 {
+    background-color: #1f3e65;
+    color: white;
+    margin-top: -3px
+}

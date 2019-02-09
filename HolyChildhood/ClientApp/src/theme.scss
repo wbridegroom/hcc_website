@@ -1,0 +1,15 @@
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+$hcc-app-primary: mat-palette($mat-blue, 700);
+$hcc-app-accent: mat-palette($mat-green, 700);
+$hcc-app-warn: mat-palette($mat-red, 600);
+
+$hcc-app-theme: mat-light-theme(
+    $hcc-app-primary,
+    $hcc-app-accent,
+    $hcc-app-warn
+);
+
+@include angular-material-theme($hcc-app-theme)

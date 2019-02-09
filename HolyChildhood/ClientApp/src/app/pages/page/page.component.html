@@ -1,0 +1,69 @@
+<div class="row adminPanel" *ngIf="isEditOn()">
+    <div class="col-md-12">
+        <p-dialog *ngIf="pageEdit" header="Edit Page" [modal]="true" [responsive]="true" [width]="450" [(visible)]="displayEditPageDialog">
+            <span class="ui-float-label" style="margin: 15px">
+                <input id="float-input" type="text" size="30" pInputText [(ngModel)]="pageEdit.title">
+                <label for="float-input">Page Title</label>
+            </span>
+            <p-footer>
+                <button type="button" pButton icon="pi pi-check" (click)="updatePage()" label="OK"></button>
+                <button type="button" pButton icon="pi pi-times" (click)="displayEditPageDialog=false" label="Cancel" class="ui-button-secondary"></button>
+            </p-footer>
+        </p-dialog>
+        <p-confirmDialog header="Delete Page?" icon="fa fa-question-circle" width="425"></p-confirmDialog>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-success adminButton dropdown-toggle" data-toggle="dropdown">
+                <i class="fas fa-plus"></i> Add Content
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" [routerLink]="" (click)="addContent('Text')">Text/HTML</a>
+                <a class="dropdown-item" [routerLink]="" (click)="addContent('Tabs')">Tabs</a>
+                <a class="dropdown-item" [routerLink]="" (click)="addContent('Calendar')">Calender</a>
+                <a class="dropdown-item" [routerLink]="" (click)="addContent('Files')">PDF Viewer</a>
+            </div>
+        </div>
+        <button class="btn btn-sm btn-primary adminButton" (click)="editPage()">
+            <i class="fas fa-edit"></i> Edit Page
+        </button>
+        <button class="btn btn-sm btn-danger adminButton" (click)="deletePage()">
+            <i class="fas fa-trash-alt"></i> Delete Page
+        </button>
+    </div>
+</div>
+
+<div class="content-container" *ngIf="pagesService.page">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i></a></li>
+            <li class="breadcrumb-item" *ngIf="!pagesService.page.parent">{{ pagesService.page.menuItem.name }}</li>
+            <li class="breadcrumb-item" *ngIf="pagesService.page.parent">{{ pagesService.page.parent.menuItem.name }}</li>
+            <li class="breadcrumb-item" *ngIf="pagesService.page.parent"><a  routerLink="/pages/{{ pagesService.page.parent.id }}">{{ pagesService.page.parent.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ pagesService.page.title }}</li>
+        </ol>
+    </nav>
+    <div class="row">
+        <div class="col-md-3" *ngIf="pagesService.page.children.length > 0">
+            <div class="card" style="width: 12rem;margin-right: 10px">
+                <div class="card-header">{{ pagesService.page.title }} Pages</div>
+                <div class="card-body">
+                    <a *ngFor="let child of pagesService.page.children" routerLink="/pages/{{ child.id }}">{{ child.title }}</a>
+                </div>
+            </div>
+        </div>
+        <div class="content col" [ngClass]="{'edit': isEditOn(), 'col-md-9': pagesService.page.children.length > 0}" *ngFor="let pageContent of pagesService.page.pageContents">
+            <div *ngIf="pageContent.contentType === 'Text'">
+                <app-content-text [pageContent]="pageContent"></app-content-text>
+            </div>
+            <div *ngIf="pageContent.contentType === 'Calendar'">
+                <app-content-calendar [pageContent]='pageContent'></app-content-calendar>
+            </div>
+            <div *ngIf="pageContent.contentType === 'Tabs'">
+                <app-content-tabs [pageContent]='pageContent'></app-content-tabs>
+            </div>
+            <div *ngIf="pageContent.contentType === 'Files'">
+                <app-content-files [pageContent]='pageContent'></app-content-files>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<div *ngIf="pageContent.editing" [froalaEditor]="options" [(froalaModel)]="pageContent.textContent.content" ></div>
+<div *ngIf="!pageContent.editing" [froalaView]="pageContent.textContent.content"></div>
+<div class="adminPanel" *ngIf="isEditOn()">
+    <div class="row">
+        <div class="col-auto mr-auto">
+        <button *ngIf="!pageContent.editing" class="btn btn-sm btn-primary adminButton" (click)="editContent()">
+            <i class="fas fa-edit"></i> Edit
+        </button>
+        <button *ngIf="pageContent.editing" class="btn btn-sm btn-primary adminButton" (click)="saveContent()">
+            <i class="fas fa-save"></i> Save
+        </button>
+        <button *ngIf="pageContent.editing" class="btn btn-sm btn-warning adminButton" (click)="cancelEdit()">
+            <i class="fas fa-ban"></i> Cancel
+        </button>
+        <button *ngIf="!pageContent.editing" class="btn btn-sm btn-danger adminButton" (click)="deleteContent()">
+            <i class="fas fa-trash-alt"></i> Delete
+        </button>
+        </div>
+        <div class="col-auto">
+            <p-dropdown [options]="backups" [(ngModel)]="selectedBackup"
+                        optionLabel="displayDate"
+                        placeholder="Select a Backup"
+                        [style]="{'width': '250px', 'lineHeight':'1.0'}"></p-dropdown>
+            <button class="btn btn-sm btn-warning adminButton" style="margin-right: 5px;" (click)="restoreContent()">
+                <i class="fas fa-trash-restore"></i> Restore
+            </button>
+        </div>
+    </div>
+</div>

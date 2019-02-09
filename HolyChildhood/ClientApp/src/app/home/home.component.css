@@ -1,0 +1,34 @@
+.hcc-inside-image {
+    background-image: url('../../assets/images/alter.jpg');
+    background-attachment: scroll;
+    background-repeat: repeat;
+    height: 225px;
+    background-size: cover;
+    background-position: center 59.85%;
+    margin-left: -15px;
+    margin-right: -15px;
+    padding: 0;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.hcc-quote {
+    position: absolute;
+    top: 35.00%;
+    left: 5.00%;
+    right: auto;
+    bottom: auto;
+    background-color: rgba(0,0,0,0.4);
+    width: 400px;
+    margin: 0;
+    padding: 10px;
+    border-radius: 10px;
+    word-wrap: break-word;
+    color: white;
+}
+
+@media screen and (max-width: 600px) {
+    .hcc-quote {
+        width: 75%
+    }
+}

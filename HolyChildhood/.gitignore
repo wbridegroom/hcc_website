@@ -24,6 +24,9 @@ Bin/
 obj/
 Obj/
 
+wwwroot/files/
+wwwroot/images/
+
 # Visual Studio 2015 cache/options directory
 .vs/
 

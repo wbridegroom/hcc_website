@@ -1,0 +1,38 @@
+.adminPanel {
+    background: repeating-linear-gradient(
+        45deg,
+        #d3d3d3,
+        #d3d3d3 10px,
+        #c4bfbf 10px,
+        #c4bfbf 20px
+    );
+}
+.adminButton {
+    color: white;
+    padding-top:0;
+    padding-bottom:0;
+    height:25px;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.content-container {
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.content {
+    margin-bottom: 5px;
+}
+
+.edit {
+    margin-bottom: 10px;
+}
+
+.edit:hover {
+    border: 1px dashed;
+}
+
+

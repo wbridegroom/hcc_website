@@ -1,0 +1,73 @@
+.navbar-dark .nav-item {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.navbar-dark .nav-item:hover {
+    color: gold;
+}
+
+.navbar-dark .active {
+    color: lightblue;
+}
+
+.adminButton {
+    padding-top:0;
+    padding-bottom:0;
+    height:25px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.nav-item .nav-link {
+    color: white;
+}
+
+.nav-item .nav-link:hover {
+    color: gold;
+}
+
+.nav-item .dropdown-menu {
+    background-color: #0d1d32;
+}
+
+.nav-item .dropdown-menu .dropdown-item {
+    color: white;
+    font-size: 16px;
+    font-weight: 550;
+}
+
+.nav-item .dropdown-menu .dropdown-item:hover {
+    background-color: #0d1d32;
+    color: gold;
+}
+
+
+
+/* .dropdown {
+    padding: 8px;
+}
+
+.dropdown-toggle {
+    cursor: default;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dropdown:hover > .dropdown-menu {
+    display: block;
+}
+
+.dropdown > .dropdown-toggle:active {
+    pointer-events: none;
+}
+
+.submenu {
+    margin-top: 0;
+    background-color: #0d1d32
+} */
+
+
+

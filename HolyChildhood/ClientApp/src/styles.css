@@ -1,1 +1,55 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~primeicons/primeicons.css";
+@import "~primeng/resources/themes/nova-light/theme.css";
+@import "~primeng/resources/primeng.min.css";
+@import "~froala-editor/css/froala_editor.pkgd.min.css";
+@import "~froala-editor/css/froala_style.min.css";
+@import "~fullcalendar/dist/fullcalendar.min.css";
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+    body > .container {
+        padding: 60px 15px 0;
+    }
+
+.list-item {
+    color: #1f3e65;
+    font-weight: 600;
+}
+
+.adminPanel {
+    background: repeating-linear-gradient(
+        45deg,
+        #d3d3d3,
+        #d3d3d3 10px,
+        #c4bfbf 10px,
+        #c4bfbf 20px
+    );
+}
+
+.adminButton {
+    color: white;
+    padding-top:0;
+    padding-bottom:0;
+    height:25px;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.hccButton {
+    line-height: 25px !important;
+    margin-top: 5px !important;
+    margin-left: 5px !important;
+    margin-bottom: 5px  !important;
+}
+
