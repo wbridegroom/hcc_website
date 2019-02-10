@@ -37,7 +37,7 @@ export class PagesService {
     public updatePage(page: Page) {
         const url = `/api/page`;
         this.http.put(url, page, http_options).subscribe(() => {
-            this.nav.getMenu();
+            this.nav.loadMenu();
             this.loadPage(page.id);
         });
     }
@@ -45,7 +45,7 @@ export class PagesService {
     public deletePage() {
         const url = `/api/page/${this.page.id}`;
         this.http.delete<Page>(url).subscribe(() => {
-            this.nav.getMenu();
+            this.nav.loadMenu();
             this.router.navigate(['/home']).then();
         });
     }
