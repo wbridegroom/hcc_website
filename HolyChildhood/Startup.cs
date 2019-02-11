@@ -42,6 +42,9 @@ namespace HolyChildhood
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            // Automatically perform database migration
+            services.BuildServiceProvider().GetService<AppDbContext>().Database.Migrate();
+
             services.AddIdentity<AppUser, IdentityRole>(opts =>
             {
                 opts.Password.RequireDigit = true;
