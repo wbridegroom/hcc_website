@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { PageContent } from '../../shared/models/page';
+import {PageContent, TextContent} from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
-import { PageContentBackup } from '../../shared/models/page-content';
+import { TextContentBackup } from '../../shared/models/page-content';
 
 @Component({
   selector: 'app-content-text',
@@ -14,14 +14,17 @@ export class ContentTextComponent implements OnInit {
 
     @Input() pageContent: PageContent;
 
-    backups: PageContentBackup[];
-    selectedBackup: PageContentBackup;
+    backups: TextContentBackup[];
+    selectedBackup: TextContentBackup;
 
     options: Object = {
         imageUploadURL: '/api/image',
         imageManagerDeleteMethod: 'DELETE',
         imageManagerDeleteURL: '/api/image',
-        imageManagerLoadURL: '/api/image'
+        imageManagerLoadURL: '/api/image',
+        placeholderText: 'Enter text here...',
+        tabSpaces: 4,
+        theme: 'gray'
     };
 
     constructor(private authService: AuthService, private pagesService: PagesService) { }
@@ -31,7 +34,7 @@ export class ContentTextComponent implements OnInit {
     }
 
     loadBackups() {
-        this.pagesService.loadPageContentBackups(this.pageContent.id).subscribe((backups: PageContentBackup[]) => {
+        this.pagesService.loadTextContentBackups(this.pageContent.textContent.id).subscribe((backups: TextContentBackup[]) => {
             this.backups = backups;
         });
     }
@@ -50,7 +53,7 @@ export class ContentTextComponent implements OnInit {
 
     saveContent() {
         this.pageContent.editing = false;
-        this.pagesService.updatePageContent(this.pageContent).subscribe(() => {
+        this.pagesService.updateTextContent(this.pageContent.textContent).subscribe(() => {
             this.loadBackups();
         });
     }
@@ -60,9 +63,9 @@ export class ContentTextComponent implements OnInit {
     }
 
     restoreContent() {
-        this.pagesService.restoreContent(this.selectedBackup.id).subscribe((pageContent: PageContent) => {
+        this.pagesService.restoreContent(this.selectedBackup.id).subscribe((textContent: TextContent) => {
             this.cancelEdit();
-            this.pageContent = pageContent;
+            this.pageContent.textContent = textContent;
             this.loadBackups();
         });
     }

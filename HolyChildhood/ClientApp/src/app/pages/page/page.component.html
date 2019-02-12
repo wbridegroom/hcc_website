@@ -42,16 +42,16 @@
             <li class="breadcrumb-item active" aria-current="page">{{ pagesService.page.title }}</li>
         </ol>
     </nav>
-    <div class="row">
+    <div [ngClass]="{'row': pagesService.page.children.length > 0}">
         <div class="col-md-3" *ngIf="pagesService.page.children.length > 0">
-            <div class="card" style="width: 12rem;margin-right: 10px">
+            <div class="card" style="width: 100% ;margin-right: 10px">
                 <div class="card-header">{{ pagesService.page.title }} Pages</div>
                 <div class="card-body">
                     <a *ngFor="let child of pagesService.page.children" routerLink="/pages/{{ child.id }}">{{ child.title }}</a>
                 </div>
             </div>
         </div>
-        <div class="content col" [ngClass]="{'edit': isEditOn(), 'col-md-9': pagesService.page.children.length > 0}" *ngFor="let pageContent of pagesService.page.pageContents">
+        <div class="content" [ngClass]="{'edit': isEditOn(), 'col-md-9': pagesService.page.children.length > 0}" *ngFor="let pageContent of pagesService.page.pageContents">
             <div *ngIf="pageContent.contentType === 'Text'">
                 <app-content-text [pageContent]="pageContent"></app-content-text>
             </div>

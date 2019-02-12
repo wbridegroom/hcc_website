@@ -1,10 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { PageContent } from '../../shared/models/page';
+import { PageContent } from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { EventService } from '../../shared/services/event.service';
-import { Event } from '../../shared/models/event';
+import { Event } from '../../shared/models/calendar';
 import { NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import 'fullcalendar';
