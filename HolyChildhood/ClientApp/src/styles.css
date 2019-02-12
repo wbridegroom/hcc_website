@@ -3,8 +3,10 @@
 @import "~primeicons/primeicons.css";
 @import "~primeng/resources/themes/nova-light/theme.css";
 @import "~primeng/resources/primeng.min.css";
+@import "~font-awesome/css/font-awesome.min.css";
 @import "~froala-editor/css/froala_editor.pkgd.min.css";
 @import "~froala-editor/css/froala_style.min.css";
+@import "~froala-editor/css/themes/gray.min.css";
 @import "~fullcalendar/dist/fullcalendar.min.css";
 
 html {

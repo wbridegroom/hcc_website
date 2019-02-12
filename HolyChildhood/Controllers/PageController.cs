@@ -36,7 +36,7 @@ namespace HolyChildhood.Controllers
                                             .Include(p => p.MenuItem) 
                                             .Include(p => p.Children)
                                             .Include(p => p.PageContents).ThenInclude(pc => pc.TextContent)
-                                            .Include(p => p.PageContents).ThenInclude(pc => pc.TabContent).ThenInclude(tc => tc.Tabs).ThenInclude(t => t.TextContent)
+                                            .Include(p => p.PageContents).ThenInclude(pc => pc.TabContent).ThenInclude(tc => tc.Tabs)//.ThenInclude(t => t.TextContent)
                                             .Include(p => p.PageContents).ThenInclude(pc => pc.CalendarContent).ThenInclude(cc => cc.Calendar).ThenInclude(c => c.Events)
                                             .FirstOrDefaultAsync(p => p.Id == id);
 

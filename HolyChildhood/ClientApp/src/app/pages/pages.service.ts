@@ -3,9 +3,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { Page, PageContent } from '../shared/models/page';
+import { Page } from '../shared/models/page';
+import { PageContent, TextContent } from '../shared/models/page-content';
 import { NavService } from '../shared/services/nav.service';
-import {PageContentBackup} from '../shared/models/page-content';
+import { TextContentBackup} from '../shared/models/page-content';
 
 const http_options = {
     headers: new HttpHeaders({
@@ -35,7 +36,7 @@ export class PagesService {
     }
 
     public updatePage(page: Page) {
-        const url = `/api/page`;
+        const url = `/api/page/${page.id}`;
         this.http.put(url, page, http_options).subscribe(() => {
             this.nav.loadMenu();
             this.loadPage(page.id);
@@ -63,18 +64,23 @@ export class PagesService {
         return this.http.put(url, pageContent, http_options);
     }
 
+    public updateTextContent(textContent: TextContent) {
+        const url = `/api/textContent/${textContent.id}`;
+        return this.http.put(url, textContent, http_options);
+    }
+
     public deletePageContent(id: number | string) {
         const url = `/api/pagecontent/${id}`;
         return this.http.delete(url);
     }
 
-    public loadPageContentBackups(id: number | string): Observable<PageContentBackup[]> {
-        const url = `/api/pagecontentbackup/${id}`;
-        return this.http.get<PageContentBackup[]>(url);
+    public loadTextContentBackups(id: number | string): Observable<TextContentBackup[]> {
+        const url = `/api/textcontentbackup/${id}`;
+        return this.http.get<TextContentBackup[]>(url);
     }
 
-    public restoreContent(id: number | string): Observable<PageContent> {
-        const url = `/api/pagecontentbackup/${id}`;
-        return this.http.post<PageContent>(url, null, http_options);
+    public restoreContent(id: number | string): Observable<TextContent> {
+        const url = `/api/textcontentbackup/${id}`;
+        return this.http.post<TextContent>(url, null, http_options);
     }
 }

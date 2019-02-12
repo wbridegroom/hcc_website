@@ -27,7 +27,7 @@ namespace HolyChildhood.Controllers
         {
             var pageContent = await dbContext.PageContents
                 .Include(pc => pc.TextContent)
-                .Include(pc => pc.TabContent).ThenInclude(tc => tc.Tabs).ThenInclude(t => t.TextContent)
+                .Include(pc => pc.TabContent).ThenInclude(tc => tc.Tabs)//.ThenInclude(t => t.TextContent)
                 .Include(pc => pc.CalendarContent).ThenInclude(cc => cc.Calendar).ThenInclude(c => c.Events)
                 .FirstOrDefaultAsync(pc => pc.Id == id);
 
@@ -66,23 +66,39 @@ namespace HolyChildhood.Controllers
         [ProducesResponseType(201)]
         public async Task<ActionResult<PageContent>> PostPageContent(PageContent pageContent)
         {
-            //var page = await dbContext.Pages.Include(p => p.PageContents).FirstOrDefaultAsync(p => p.Id == pageContent.Page.Id);
-            //if (page == null) return NotFound();
+            var page = await dbContext.Pages.Include(p => p.PageContents).FirstOrDefaultAsync(p => p.Id == pageContent.Page.Id);
+            if (page == null) return NotFound();
 
-            // Find max Y
-            //var y = 0;
-            //foreach (var content in page.PageContents)
-            //{
-            //    if (content.Y >= y) y = content.Y + 1;
-            //}
+            // Find max Index
+            var index = 0;
+            foreach (var content in page.PageContents)
+            {
+                if (content.Index >= index) index = content.Index + 1;
+            }
 
-            //pageContent.Page = page;
-            //pageContent.Height = 1;
-            //pageContent.Width = 4;
-            //pageContent.X = 0;
-            //pageContent.Y = y;
+            var pc = new PageContent
+            {
+                ContentType = pageContent.ContentType,
+                HasTitle = pageContent.HasTitle,
+                Title = pageContent.Title,
+                Page = page
+            };
 
-            dbContext.PageContents.AddAsync(pageContent);
+            switch (pc.ContentType)
+            {
+                case "Text":
+                    pc.TextContent = new TextContent();
+                    break;
+                case "Tabs":
+                    pc.TabContent = new TabContent();
+                    break;
+                case "Calendar":
+                    // @TODO Remove hard-coded calendar once it is fully implemented.
+                    pc.CalendarContent = new CalendarContent { CalendarId = 1 };
+                    break;
+            }
+
+            dbContext.PageContents.AddAsync(pc);
             await dbContext.SaveChangesAsync();
 
             return CreatedAtAction("GetPageContent", new { id = pageContent.Id }, pageContent);

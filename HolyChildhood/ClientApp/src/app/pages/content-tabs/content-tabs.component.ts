@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { PageContent } from '../../shared/models/page';
+import { PageContent } from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
 
