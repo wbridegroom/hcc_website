@@ -78,7 +78,8 @@ namespace HolyChildhood.Controllers
                 {
                     Token = encodedToken,
                     Expiration = tokenExpirationMins,
-                    UserName = user.UserName
+                    UserName = user.UserName,
+                    FullName = $"{user.FirstName} {user.LastName}"
                 };
                 return response;
             }

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import {PageContent, TextContent} from '../../shared/models/page-content';
+import { TextContent} from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { TextContentBackup } from '../../shared/models/page-content';
@@ -12,8 +12,10 @@ import { TextContentBackup } from '../../shared/models/page-content';
 })
 export class ContentTextComponent implements OnInit {
 
-    @Input() pageContent: PageContent;
+    @Input() textContent: TextContent;
+    @Input() pageContentId: number;
 
+    editing: boolean;
     backups: TextContentBackup[];
     selectedBackup: TextContentBackup;
 
@@ -34,7 +36,7 @@ export class ContentTextComponent implements OnInit {
     }
 
     loadBackups() {
-        this.pagesService.loadTextContentBackups(this.pageContent.textContent.id).subscribe((backups: TextContentBackup[]) => {
+        this.pagesService.loadTextContentBackups(this.textContent.id).subscribe((backups: TextContentBackup[]) => {
             this.backups = backups;
         });
     }
@@ -48,31 +50,30 @@ export class ContentTextComponent implements OnInit {
     }
 
     editContent() {
-        this.pageContent.editing = true;
+        this.editing = true;
     }
 
     saveContent() {
-        this.pageContent.editing = false;
-        this.pagesService.updateTextContent(this.pageContent.textContent).subscribe(() => {
+        this.editing = false;
+        this.pagesService.updateTextContent(this.textContent).subscribe(() => {
             this.loadBackups();
         });
     }
 
     cancelEdit() {
-        this.pageContent.editing = false;
+        this.editing = false;
     }
 
     restoreContent() {
         this.pagesService.restoreContent(this.selectedBackup.id).subscribe((textContent: TextContent) => {
             this.cancelEdit();
-            this.pageContent.textContent = textContent;
+            this.textContent = textContent;
             this.loadBackups();
         });
     }
 
     deleteContent() {
-        const id = this.pageContent.id;
-        console.log(`Delete Page Content Id: ${id}`);
+        const id = this.pageContentId;
         this.pagesService.deletePageContent(id).subscribe(() => {
             this.pagesService.reloadPage();
         });

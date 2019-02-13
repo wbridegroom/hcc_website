@@ -14,6 +14,7 @@ import {Menu} from '../../shared/models/menu';
 })
 export class NavComponent implements OnInit {
 
+    editModeOn = false;
     displayMenuDialog = false;
     displayPageDialog = false;
     page: Page = {} as Page;
@@ -25,6 +26,7 @@ export class NavComponent implements OnInit {
 
     ngOnInit() {
         this.getMenu();
+        this.editModeOn = this.isEdit();
     }
 
     getMenu() {
@@ -45,9 +47,9 @@ export class NavComponent implements OnInit {
         return this.authService.isLoggedIn();
     }
 
-    getUserName(): string {
+    getFullName(): string {
         const auth = this.authService.getAuth();
-        return auth.userName;
+        return auth.fullName;
     }
 
     showMenuDialog(menuItem) {
@@ -61,6 +63,7 @@ export class NavComponent implements OnInit {
     deleteMenu(menuItem) {
         this.confirmService.confirm({
             message: `Are you sure you want to delete the ${menuItem.name} menu?`,
+            key: 'menuDelete',
             accept: () => {
                 this.navService.deleteMenu(menuItem);
             }

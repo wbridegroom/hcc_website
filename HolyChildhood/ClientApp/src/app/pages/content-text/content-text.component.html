@@ -1,18 +1,18 @@
-<div *ngIf="pageContent.editing" [froalaEditor]="options" [(froalaModel)]="pageContent.textContent.content" ></div>
-<div *ngIf="!pageContent.editing" [froalaView]="pageContent.textContent.content" style="min-height: 35px;"></div>
+<div *ngIf="editing" [froalaEditor]="options" [(froalaModel)]="textContent.content" ></div>
+<div *ngIf="!editing" [froalaView]="textContent.content" style="min-height: 35px;"></div>
 <div class="adminPanel" *ngIf="isEditOn()">
     <div class="row">
         <div class="col-auto mr-auto">
-        <button *ngIf="!pageContent.editing" class="btn btn-sm btn-primary adminButton" (click)="editContent()">
+        <button *ngIf="!editing" class="btn btn-sm btn-primary adminButton" (click)="editContent()">
             <i class="fas fa-edit"></i> Edit
         </button>
-        <button *ngIf="pageContent.editing" class="btn btn-sm btn-primary adminButton" (click)="saveContent()">
+        <button *ngIf="editing" class="btn btn-sm btn-primary adminButton" (click)="saveContent()">
             <i class="fas fa-save"></i> Save
         </button>
-        <button *ngIf="pageContent.editing" class="btn btn-sm btn-warning adminButton" (click)="cancelEdit()">
+        <button *ngIf="editing" class="btn btn-sm btn-warning adminButton" (click)="cancelEdit()">
             <i class="fas fa-ban"></i> Cancel
         </button>
-        <button *ngIf="!pageContent.editing" class="btn btn-sm btn-danger adminButton" (click)="deleteContent()">
+        <button *ngIf="!editing && pageContentId" class="btn btn-sm btn-danger adminButton" (click)="deleteContent()">
             <i class="fas fa-trash-alt"></i> Delete
         </button>
         </div>

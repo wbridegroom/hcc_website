@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
+import { InputSwitchModule } from 'primeng/primeng';
 
 import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from './header/header.component';
@@ -29,6 +30,7 @@ import { LoginComponent } from './login/login.component';
         InputTextModule,
         DialogModule,
         ConfirmDialogModule,
+        InputSwitchModule
     ],
     providers: [
         ConfirmationService
