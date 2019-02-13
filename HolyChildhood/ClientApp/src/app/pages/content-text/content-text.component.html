@@ -1,5 +1,5 @@
-<div *ngIf="editing" [froalaEditor]="options" [(froalaModel)]="textContent.content" ></div>
-<div *ngIf="!editing" [froalaView]="textContent.content" style="min-height: 35px;"></div>
+<div *ngIf="editing && textContent" [froalaEditor]="options" [(froalaModel)]="textContent.content" ></div>
+<div *ngIf="!editing && textContent" [froalaView]="textContent.content" style="min-height: 35px;"></div>
 <div class="adminPanel" *ngIf="isEditOn()">
     <div class="row">
         <div class="col-auto mr-auto">
