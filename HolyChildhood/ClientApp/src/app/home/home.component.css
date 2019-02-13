@@ -27,6 +27,14 @@
     color: white;
 }
 
+.edit {
+    margin-bottom: 10px;
+}
+
+.edit:hover {
+    border: 1px dashed;
+}
+
 @media screen and (max-width: 600px) {
     .hcc-quote {
         width: 75%

@@ -64,6 +64,11 @@ export class PagesService {
         return this.http.put(url, pageContent, http_options);
     }
 
+    public getTextContent(id: number | string): Observable<TextContent> {
+        const url = `/api/textContent/${id}`;
+        return this.http.get<TextContent>(url, http_options);
+    }
+
     public updateTextContent(textContent: TextContent) {
         const url = `/api/textContent/${textContent.id}`;
         return this.http.put(url, textContent, http_options);

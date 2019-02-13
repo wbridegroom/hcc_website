@@ -65,6 +65,9 @@ import 'jquery';
         EventService,
         ConfirmationService,
         MessageService
+    ],
+    exports: [
+        ContentTextComponent
     ]
 })
 export class PagesModule { }

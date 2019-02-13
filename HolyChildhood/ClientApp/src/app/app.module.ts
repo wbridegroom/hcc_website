@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 
 import { AppComponent } from './app.component';
 import { AppRouting } from './app.routing';
@@ -13,13 +14,15 @@ import { PagesModule } from './pages/pages.module';
 @NgModule({
     declarations: [
         AppComponent,
-        HomeComponent,
+        HomeComponent
     ],
     imports: [
         BrowserModule,
         AppRouting,
         UiModule,
-        PagesModule
+        PagesModule,
+        FroalaEditorModule,
+        FroalaViewModule
     ],
     providers: [
         AuthService,

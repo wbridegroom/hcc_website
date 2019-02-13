@@ -10,7 +10,7 @@
                 <button type="button" pButton icon="pi pi-times" (click)="displayEditPageDialog=false" label="Cancel" class="ui-button-secondary"></button>
             </p-footer>
         </p-dialog>
-        <p-confirmDialog header="Delete Page?" icon="fa fa-question-circle" width="425"></p-confirmDialog>
+        <p-confirmDialog key="pageDelete" header="Delete Page?" icon="fa fa-question-circle" width="425"></p-confirmDialog>
 
         <div class="btn-group">
             <button type="button" class="btn btn-sm btn-success adminButton dropdown-toggle" data-toggle="dropdown">
@@ -53,7 +53,7 @@
         </div>
         <div class="content" [ngClass]="{'edit': isEditOn(), 'col-md-9': pagesService.page.children.length > 0}" *ngFor="let pageContent of pagesService.page.pageContents">
             <div *ngIf="pageContent.contentType === 'Text'">
-                <app-content-text [pageContent]="pageContent"></app-content-text>
+                <app-content-text [pageContentId]="pageContent.id" [textContent]="pageContent.textContent"></app-content-text>
             </div>
             <div *ngIf="pageContent.contentType === 'Calendar'">
                 <app-content-calendar [pageContent]='pageContent'></app-content-calendar>

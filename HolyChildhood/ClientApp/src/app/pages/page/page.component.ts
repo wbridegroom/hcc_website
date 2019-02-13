@@ -40,6 +40,7 @@ export class PageComponent implements OnInit {
     deletePage() {
         this.confirmService.confirm({
             message: 'Are you sure you want to delete this page?',
+            key: 'pageDelete',
             accept: () => {
                 this.pagesService.deletePage();
             }

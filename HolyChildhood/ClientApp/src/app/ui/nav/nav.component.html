@@ -1,8 +1,8 @@
 
 <nav class="navbar navbar-expand-md navbar-dark">
-    <div class="navbar-brand">
-        <img src="assets/images/cross.png" style="height: 35px" alt="cross">
-    </div>
+    <!--<div class="navbar-brand">-->
+        <!--<img src="assets/images/cross.png" style="height: 35px" alt="cross">-->
+    <!--</div>-->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>Menu
@@ -16,27 +16,26 @@
             </li>
 
             <li class="nav-item" *ngFor="let menuItem of navService.menuItems" [ngClass]="{'dropdown': hasPages(menuItem) || isEdit()}">
-                <a *ngIf="!hasPages(menuItem) && !isEdit()" class="nav-item nav-link" routerLinkActive="active"  routerLink="/pages/{{ menuItem.id }}">{{ menuItem.name }}</a>
-                <a *ngIf="hasPages(menuItem) || isEdit()" class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">{{ menuItem.name }}</a>
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">{{ menuItem.name }}</a>
                 <div class="dropdown-menu">
-                    <button *ngIf="isEdit()" class="dropdown-item" class="btn btn-sm btn-primary adminButton" (click)="showMenuDialog(menuItem)">
-                        <i class="fas fa-pencil-alt"></i> Edit Menu
-                    </button>
-                    <button *ngIf="isEdit()" class="dropdown-item" class="btn btn-sm btn-danger adminButton" (click)="deleteMenu(menuItem)">
-                        <i class="fas fa-trash"></i> Delete Menu
-                    </button>
 
                     <a *ngFor="let page of menuItem.pages" class="dropdown-item" routerLink="/pages/{{ page.id }}">{{ page.title }}</a>
 
-
-                    <button *ngIf="isEdit()" class="dropdown-item" class="btn btn-sm btn-success adminButton" (click)="showPageDialog(menuItem)">
-                        <i class="fas fa-plus"></i> Add Page
-                    </button>
+                    <div *ngIf="isEdit()" class="dropdown-divider"></div>
+                    <a *ngIf="isEdit()" class="dropdown-item" (click)="showPageDialog(menuItem)">
+                        <i class="fas fa-plus"></i><i> Add Page...</i>
+                    </a>
+                    <a *ngIf="isEdit()" class="dropdown-item" (click)="showMenuDialog(menuItem)">
+                        <i class="fas fa-pencil-alt"></i><i> Edit Menu...</i>
+                    </a>
+                    <a *ngIf="isEdit() && menuItem.pages.length == 0" class="dropdown-item" (click)="deleteMenu(menuItem)">
+                        <i class="fas fa-trash"></i><i> Delete Menu</i>
+                    </a>
                 </div>
             </li>
 
             <div *ngIf="isEdit()">
-                <p-confirmDialog header="Delete Menu?" icon="fa fa-question-circle" width="425"></p-confirmDialog>
+                <p-confirmDialog key="menuDelete" header="Delete Menu?" icon="fa fa-question-circle" width="425"></p-confirmDialog>
 
                 <p-dialog header="Menu" [modal]="true" [responsive]="true" [width]="450" [(visible)]="displayMenuDialog">
                     <span class="ui-float-label" style="margin: 15px">
@@ -61,7 +60,7 @@
 
                 </p-dialog>
 
-                <button class="btn btn-sm btn-success adminButton" (click)="showMenuDialog(null)">
+                <button class="btn btn-sm btn-success adminButton" style="margin-top: 8px" (click)="showMenuDialog(null)">
                     <i class="fas fa-plus"></i> Add Menu
                 </button>
             </div>
@@ -70,15 +69,25 @@
         <ul class="navbar-nav">
             <li *ngIf="isAuthenticated()" class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="far fa-user"></i> {{ getUserName() }}
+                    <i class="far fa-user"></i> {{ getFullName() }}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" routerLink="/profile"><i class="fas fa-user-cog"></i> User Profile</a>
                     <a class="dropdown-item" routerLinkActive="active" routerLink="/settings">
                         <i class="fas fa-cogs"></i> Settings
                     </a>
-                    <a class="dropdown-item" [routerLink]="" (click)="toggleEditMode()">
-                        <i class="fas fa-pencil-alt"></i> {{ getEditMenuItem() }}
-                    </a>
+                    <div class="dropdown-item" (click)="$event.stopPropagation()">
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-6">
+                                <p-inputSwitch [(ngModel)]="editModeOn" (onChange)="toggleEditMode()"></p-inputSwitch>
+                            </div>
+                            <div class="ui-grid-col-6">
+                                Edit&nbsp;
+                                <span *ngIf="isEdit()">On</span>
+                                <span *ngIf="!isEdit()">Off</span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" (click)="logout()" [routerLink]="">
                         <i class="fas fa-sign-out-alt"></i> Logoff

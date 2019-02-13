@@ -1,3 +1,7 @@
+.navbar {
+    padding: 0.2rem 0;
+}
+
 .navbar-dark .nav-item {
     color: white;
     font-size: 18px;
