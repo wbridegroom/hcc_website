@@ -32,7 +32,9 @@ export class ContentTextComponent implements OnInit {
     constructor(private authService: AuthService, private pagesService: PagesService) { }
 
     ngOnInit() {
-        this.loadBackups();
+        if (this.textContent) {
+            this.loadBackups();
+        }
     }
 
     loadBackups() {
