@@ -1,3 +1,8 @@
 .fc-content {
     cursor: pointer;
 }
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+

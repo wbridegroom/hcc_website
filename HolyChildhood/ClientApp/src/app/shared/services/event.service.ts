@@ -28,7 +28,7 @@ export class EventService {
                 'Content-Type':  'application/json'
             })
         };
-
+        console.log(event);
         return this.httpClient.post<Event>('/api/event', event, options);
     }
 }

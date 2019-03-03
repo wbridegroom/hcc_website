@@ -33,17 +33,15 @@ namespace HolyChildhood.Controllers
         public async Task<ActionResult<Page>> GetPage(int id)
         {
             var page = await dbContext.Pages.Include(p => p.Parent).ThenInclude(p => p.MenuItem)
-                                            .Include(p => p.MenuItem) 
-                                            .Include(p => p.Children)
-                                            .Include(p => p.PageContents).ThenInclude(pc => pc.TextContent)
-                                            .Include(p => p.PageContents).ThenInclude(pc => pc.TabContent).ThenInclude(tc => tc.Tabs)//.ThenInclude(t => t.TextContent)
-                                            .Include(p => p.PageContents).ThenInclude(pc => pc.CalendarContent).ThenInclude(cc => cc.Calendar).ThenInclude(c => c.Events)
-                                            .FirstOrDefaultAsync(p => p.Id == id);
+                .Include(p => p.MenuItem) 
+                .Include(p => p.Children)
+                .Include(p => p.PageContents).ThenInclude(pc => pc.TextContent)
+                .Include(p => p.PageContents).ThenInclude(pc => pc.TabContent).ThenInclude(tc => tc.Tabs).ThenInclude(t => t.TextContent)
+                .Include(p => p.PageContents).ThenInclude(pc => pc.CalendarContent).ThenInclude(cc => cc.Calendar).ThenInclude(c => c.Events)
+                .Include(p => p.PageContents).ThenInclude(pc => pc.FileContent).ThenInclude(fc => fc.Files)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (page == null)
-            {
-                return NotFound();
-            }
+            if (page == null) return NotFound();
 
             return page;
         }

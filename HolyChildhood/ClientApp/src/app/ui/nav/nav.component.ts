@@ -1,11 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
-import { ConfirmationService } from 'primeng/api';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 import {Page} from '../../shared/models/page';
 import {NavService} from '../../shared/services/nav.service';
 import {AuthService} from '../../shared/services/auth.service';
 import {Menu} from '../../shared/models/menu';
+import { Confirm } from '../../shared/models/confirm';
 
 @Component({
   selector: 'app-nav',
@@ -14,14 +15,18 @@ import {Menu} from '../../shared/models/menu';
 })
 export class NavComponent implements OnInit {
 
+    @ViewChild('pageDialog') pageDialog: ElementRef;
+    @ViewChild('menuDialog') menuDialog: ElementRef;
+    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
+    modalRef: BsModalRef;
+    confirmModel: Confirm;
+
     editModeOn = false;
-    displayMenuDialog = false;
-    displayPageDialog = false;
     page: Page = {} as Page;
     menu: Menu = {} as Menu;
 
     constructor(private authService: AuthService,
-                private confirmService: ConfirmationService,
+                private modalService: BsModalService,
                 public navService: NavService) { }
 
     ngOnInit() {
@@ -31,6 +36,10 @@ export class NavComponent implements OnInit {
 
     getMenu() {
         this.navService.loadMenu();
+    }
+
+    showDialog(dialog) {
+        this.modalRef = this.modalService.show(dialog);
     }
 
     hasPages(menu) {
@@ -57,17 +66,18 @@ export class NavComponent implements OnInit {
         if (menuItem) {
             this.menu = Object.assign({}, menuItem);
         }
-        this.displayMenuDialog = true;
+        this.showDialog(this.menuDialog);
     }
 
     deleteMenu(menuItem) {
-        this.confirmService.confirm({
+        this.confirmModel = {
+            title: 'Delete Menu?',
             message: `Are you sure you want to delete the ${menuItem.name} menu?`,
-            key: 'menuDelete',
-            accept: () => {
+            onOk: () => {
                 this.navService.deleteMenu(menuItem);
             }
-        });
+        } as Confirm;
+        this.showDialog(this.confirmDialog);
     }
 
     showPageDialog(menuItem) {
@@ -75,11 +85,10 @@ export class NavComponent implements OnInit {
         if (menuItem) {
             this.page.menuItemId = menuItem.id;
         }
-        this.displayPageDialog = true;
+        this.showDialog(this.pageDialog);
     }
 
     addMenu(): void {
-        this.displayMenuDialog = false;
         if (this.menu.id) {
             this.navService.saveMenu(this.menu);
         } else {
@@ -88,20 +97,11 @@ export class NavComponent implements OnInit {
     }
 
     addPage(): void {
-        this.displayPageDialog = false;
         this.navService.addPage(this.page);
     }
 
     isEdit() {
         return this.isAuthenticated() && this.authService.isEdit();
-    }
-
-    getEditMenuItem() {
-        if (this.authService.isEdit()) {
-            return 'Turn off Editing';
-        } else {
-            return 'Turn on Editing';
-        }
     }
 
     toggleEditMode() {

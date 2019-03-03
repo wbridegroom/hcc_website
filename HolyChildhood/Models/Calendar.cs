@@ -21,6 +21,17 @@ namespace HolyChildhood.Models
         public string Location { get; set; }
         public string Notes { get; set; }
         public bool AllDay { get; set; }
-        public bool Repeats { get; set; }
+        public bool IsRecurring { get; set; }
+        public int? EventTypeId { get; set; }
+        public EventType EventType { get; set; }
+        public Guid? RecurrenceId { get; set; }
     }
+
+    public class EventType
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Color { get; set; }
+    }
+
 }

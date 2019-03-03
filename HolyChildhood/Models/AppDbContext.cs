@@ -11,6 +11,7 @@ namespace HolyChildhood.Models
         public DbSet<Page> Pages { get; set; }
         public DbSet<PageContent> PageContents { get; set; }
         public DbSet<TextContent> TextContents { get; set; }
+        public DbSet<FileContent> FileContents { get; set; }
         public DbSet<TabContent> TabContents { get; set; }
         public DbSet<Tab> Tabs { get; set; }
         public DbSet<CalendarContent> CalendarContents { get; set; }
@@ -18,6 +19,7 @@ namespace HolyChildhood.Models
 
         public DbSet<Calendar> Calendars { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<EventType> EventTypes { get; set; }
 
         public DbSet<File> Files { get; set; }
 
@@ -27,12 +29,8 @@ namespace HolyChildhood.Models
             builder.Entity<PageContent>().HasOne(pc => pc.Page).WithMany(p => p.PageContents)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //builder.Entity<TextContent>().HasOne<PageContent>().WithOne().OnDelete(DeleteBehavior.Cascade);
-            //builder.Entity<TabContent>().HasOne<PageContent>().WithOne().OnDelete(DeleteBehavior.Cascade);
-            //builder.Entity<CalendarContent>().HasOne<PageContent>().WithOne().OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<TextContentBackup>().HasOne(tcb => tcb.TextContent).WithMany()
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<TextContent>().HasMany<TextContentBackup>().WithOne(tcb => tcb.TextContent).OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Tab>().HasOne(t => t.TabContent).WithMany(tc => tc.Tabs).OnDelete(DeleteBehavior.Cascade);
             
             base.OnModelCreating(builder);
         }

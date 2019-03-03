@@ -4,6 +4,7 @@ import { TextContent} from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { TextContentBackup } from '../../shared/models/page-content';
+import {PageComponent} from '../page/page.component';
 
 @Component({
   selector: 'app-content-text',
@@ -12,6 +13,7 @@ import { TextContentBackup } from '../../shared/models/page-content';
 })
 export class ContentTextComponent implements OnInit {
 
+    @Input() pageComponent: PageComponent;
     @Input() textContent: TextContent;
     @Input() pageContentId: number;
 
@@ -77,7 +79,7 @@ export class ContentTextComponent implements OnInit {
     deleteContent() {
         const id = this.pageContentId;
         this.pagesService.deletePageContent(id).subscribe(() => {
-            this.pagesService.reloadPage();
+            this.pageComponent.loadPage();
         });
     }
 }

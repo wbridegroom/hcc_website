@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HolyChildhood.Models;
@@ -84,7 +85,7 @@ namespace HolyChildhood
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider, AppDbContext db)
         {
             if (env.IsDevelopment())
             {
@@ -125,6 +126,20 @@ namespace HolyChildhood
             });
 
             CreateRoles(serviceProvider);
+            CreateEventTypes(db);
+        }
+
+        private void CreateEventTypes(AppDbContext db)
+        {
+            var eventTypes = db.EventTypes.ToList();
+            if (eventTypes.Count == 0)
+            {
+                db.EventTypes.Add(new EventType { Name = "Regular", Color = "Blue" });
+                db.EventTypes.Add(new EventType { Name = "Meeting", Color = "Red" });
+                db.EventTypes.Add(new EventType { Name = "Mass", Color = "Green" });
+                db.EventTypes.Add(new EventType { Name = "Holiday", Color = "Gray" });
+                db.SaveChanges();
+            }
         }
 
         private void CreateRoles(IServiceProvider serviceProvider)

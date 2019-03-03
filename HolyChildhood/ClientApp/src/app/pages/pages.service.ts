@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { Page } from '../shared/models/page';
 import { PageContent, TextContent } from '../shared/models/page-content';
-import { NavService } from '../shared/services/nav.service';
 import { TextContentBackup} from '../shared/models/page-content';
 
 const http_options = {
@@ -18,16 +16,11 @@ const http_options = {
     providedIn: 'root'
 })
 export class PagesService {
-    public page: Page;
+    constructor(private http: HttpClient) { }
 
-    constructor(private http: HttpClient, private router: Router, private nav: NavService) { }
-
-    public loadPage(id) {
-        this.getPage(id).subscribe(page => this.page = page);
-    }
-
-    public reloadPage() {
-        this.loadPage(this.page.id);
+    public addPage(page: Page) {
+        const url = '/api/page';
+        return this.http.post<Page>(url, page, http_options);
     }
 
     public getPage(id: number | string): Observable<Page> {
@@ -37,26 +30,17 @@ export class PagesService {
 
     public updatePage(page: Page) {
         const url = `/api/page/${page.id}`;
-        this.http.put(url, page, http_options).subscribe(() => {
-            this.nav.loadMenu();
-            this.loadPage(page.id);
-        });
+        return this.http.put(url, page, http_options);
     }
 
-    public deletePage() {
-        const url = `/api/page/${this.page.id}`;
-        this.http.delete<Page>(url).subscribe(() => {
-            this.nav.loadMenu();
-            this.router.navigate(['/home']).then();
-        });
+    public deletePage(id) {
+        const url = `/api/page/${id}`;
+        return this.http.delete<Page>(url);
     }
 
-    public addPageContent(contentType) {
+    public addPageContent(content) {
         const url = `/api/pagecontent`;
-        const newContent = { contentType: contentType, page: this.page} as PageContent;
-        this.http.post(url, newContent, http_options).subscribe(() => {
-            this.reloadPage();
-        });
+        return this.http.post(url, content, http_options);
     }
 
     public updatePageContent(pageContent: PageContent) {
@@ -88,4 +72,20 @@ export class PagesService {
         const url = `/api/textcontentbackup/${id}`;
         return this.http.post<TextContent>(url, null, http_options);
     }
+
+    public addTab(tab) {
+        const url = '/api/tab';
+        return this.http.post(url, tab, http_options);
+    }
+
+    public saveTab(tab) {
+        const url = `/api/tab/${tab.id}`;
+        return this.http.put(url, tab, http_options);
+    }
+
+    public deleteTab(tab) {
+        const url = `/api/tab/${tab.id}`;
+        return this.http.delete(url, http_options);
+    }
+
 }

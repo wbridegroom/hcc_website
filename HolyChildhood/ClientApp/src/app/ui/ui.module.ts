@@ -6,10 +6,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
-import { DialogModule } from 'primeng/dialog';
 import { InputSwitchModule } from 'primeng/primeng';
+import { ModalModule } from 'ngx-bootstrap';
 
 import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from './header/header.component';
@@ -28,12 +26,8 @@ import { LoginComponent } from './login/login.component';
         FormsModule,
         ReactiveFormsModule,
         InputTextModule,
-        DialogModule,
-        ConfirmDialogModule,
-        InputSwitchModule
-    ],
-    providers: [
-        ConfirmationService
+        InputSwitchModule,
+        ModalModule.forRoot()
     ],
     exports: [LayoutComponent]
 })

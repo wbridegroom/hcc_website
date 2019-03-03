@@ -20,13 +20,7 @@
                         "tsConfig": "src/tsconfig.app.json",
                         "progress": true,
                         "assets": [
-                            "src/favicon.ico",
-                            "src/assets",
-                            {
-                                "glob": "**/*",
-                                "input": "./node_modules/ngx-extended-pdf-viewer/assets/locale",
-                                "output": "/assets/locale/"
-                            }
+                            "src/favicon.ico"
                         ],
                         "styles": [
                             "src/theme.scss",
@@ -34,12 +28,11 @@
                         ],
                         "scripts": [
                             "./node_modules/jquery/dist/jquery.min.js",
+                            "./node_modules/popper.js/dist/umd/popper.min.js",
+                            "./node_modules/bootstrap/dist/js/bootstrap.min.js",
                             "./node_modules/froala-editor/js/froala_editor.pkgd.min.js",
                             "./node_modules/moment/moment.js",
-                            "./node_modules/fullcalendar/dist/fullcalendar.js",
-                            "./node_modules/ngx-extended-pdf-viewer/assets/pdf.js",
-                            "./node_modules/ngx-extended-pdf-viewer/assets/pdf.worker.js",
-                            "./node_modules/ngx-extended-pdf-viewer/assets/viewer.js"
+                            "./node_modules/fullcalendar/dist/fullcalendar.min.js"
                         ]
                     },
                     "configurations": {

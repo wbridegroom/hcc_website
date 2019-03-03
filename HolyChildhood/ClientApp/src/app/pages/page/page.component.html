@@ -1,26 +1,87 @@
-<div class="row adminPanel" *ngIf="isEditOn()">
-    <div class="col-md-12">
-        <p-dialog *ngIf="pageEdit" header="Edit Page" [modal]="true" [responsive]="true" [width]="450" [(visible)]="displayEditPageDialog">
+<!-- Dialogs -->
+<span *ngIf="isEditOn()">
+    <ng-template #editPageDialog>
+        <div class="modal-header">
+            <h4 class="modal-title">Edit Page</h4>
+            <button type="button" class="close pull-right" (click)="modalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
             <span class="ui-float-label" style="margin: 15px">
                 <input id="float-input" type="text" size="30" pInputText [(ngModel)]="pageEdit.title">
                 <label for="float-input">Page Title</label>
             </span>
-            <p-footer>
-                <button type="button" pButton icon="pi pi-check" (click)="updatePage()" label="OK"></button>
-                <button type="button" pButton icon="pi pi-times" (click)="displayEditPageDialog=false" label="Cancel" class="ui-button-secondary"></button>
-            </p-footer>
-        </p-dialog>
-        <p-confirmDialog key="pageDelete" header="Delete Page?" icon="fa fa-question-circle" width="425"></p-confirmDialog>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="modalRef.hide(); updatePage()"><i class="fas fa-check"></i> Ok</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> Cancel</button>
+        </div>
+    </ng-template>
 
+    <ng-template #addSubPageDialog>
+        <div class="modal-header">
+            <h4 class="modal-title">{{ page.title }}: Add Sub-Page</h4>
+            <button type="button" class="close pull-right" (click)="modalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <span class="ui-float-label" style="margin: 15px">
+                <input id="pageTitle" type="text" size="30" pInputText [(ngModel)]="pageAdd.title">
+                <label for="pageTitle">Page Title</label>
+            </span>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="modalRef.hide(); addSubPage()"><i class="fas fa-check"></i> Ok</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> Cancel</button>
+        </div>
+    </ng-template>
+
+    <ng-template #pdfTypeDialog>
+        <div class="modal-header">
+            <h4 class="modal-title">PDF Types</h4>
+            <button type="button" class="close pull-right" (click)="modalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p-dropdown [options]="pdfTypes" [(ngModel)]="content.fileContent.fileType"></p-dropdown>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="modalRef.hide(); addContent()"><i class="fas fa-check"></i> Ok</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> Cancel</button>
+        </div>
+    </ng-template>
+
+    <ng-template #confirmationDialog>
+        <div class="modal-header">
+            <h4 class="modal-title">{{ confirmModel.title }}</h4>
+            <button type="button" class="close pull-right" (click)="modalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <i class="fas fa-question"></i> {{ confirmModel.message }}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="modalRef.hide(); confirmModel.onOk()"><i class="fas fa-check"></i> Yes</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> No</button>
+        </div>
+    </ng-template>
+</span>
+
+<div class="row adminPanel" *ngIf="isEditOn()">
+    <div class="col-md-12">
         <div class="btn-group">
             <button type="button" class="btn btn-sm btn-success adminButton dropdown-toggle" data-toggle="dropdown">
                 <i class="fas fa-plus"></i> Add Content
             </button>
             <div class="dropdown-menu">
-                <a class="dropdown-item" [routerLink]="" (click)="addContent('Text')">Text/HTML</a>
-                <a class="dropdown-item" [routerLink]="" (click)="addContent('Tabs')">Tabs</a>
-                <a class="dropdown-item" [routerLink]="" (click)="addContent('Calendar')">Calender</a>
-                <a class="dropdown-item" [routerLink]="" (click)="addContent('Files')">PDF Viewer</a>
+                <a class="dropdown-item" [routerLink]="" (click)="createContent('Text')">Text/HTML</a>
+                <a class="dropdown-item" [routerLink]="" (click)="createContent('Tabs')">Tabs</a>
+                <a class="dropdown-item" [routerLink]="" (click)="createContent('Calendar')">Calender</a>
+                <a class="dropdown-item" [routerLink]="" (click)="createContent('Files')">PDF Viewer</a>
             </div>
         </div>
         <button class="btn btn-sm btn-primary adminButton" (click)="editPage()">
@@ -29,40 +90,49 @@
         <button class="btn btn-sm btn-danger adminButton" (click)="deletePage()">
             <i class="fas fa-trash-alt"></i> Delete Page
         </button>
+        <button *ngIf="page && !page.parent" class="btn btn-sm btn-success adminButton" (click)="showAddSubPageDialog()">
+            <i class="fas fa-plus"></i> Add Sub-Page
+        </button>
     </div>
 </div>
 
-<div class="content-container" *ngIf="pagesService.page">
+<div class="content-container" *ngIf="page">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i></a></li>
-            <li class="breadcrumb-item" *ngIf="!pagesService.page.parent">{{ pagesService.page.menuItem.name }}</li>
-            <li class="breadcrumb-item" *ngIf="pagesService.page.parent">{{ pagesService.page.parent.menuItem.name }}</li>
-            <li class="breadcrumb-item" *ngIf="pagesService.page.parent"><a  routerLink="/pages/{{ pagesService.page.parent.id }}">{{ pagesService.page.parent.title }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ pagesService.page.title }}</li>
+            <li class="breadcrumb-item" *ngIf="!page.parent">{{ page.menuItem.name }}</li>
+            <li class="breadcrumb-item" *ngIf="page.parent">{{ page.parent.menuItem.name }}</li>
+            <li class="breadcrumb-item" *ngIf="page.parent"><a  routerLink="/pages/{{ page.parent.id }}">{{ page.parent.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ page.title }}</li>
         </ol>
     </nav>
-    <div [ngClass]="{'row': pagesService.page.children.length > 0}">
-        <div class="col-md-3" *ngIf="pagesService.page.children.length > 0">
+    <div class="row">
+        <div class="col-md-3" *ngIf="page.children.length > 0">
             <div class="card" style="width: 100% ;margin-right: 10px">
-                <div class="card-header">{{ pagesService.page.title }} Pages</div>
+                <div class="card-header">{{ page.title }}</div>
                 <div class="card-body">
-                    <a *ngFor="let child of pagesService.page.children" routerLink="/pages/{{ child.id }}">{{ child.title }}</a>
+                    <ul class="nav flex-column">
+                        <li class="nav-item" *ngFor="let child of page.children">
+                            <a class="nav-link" routerLink="/pages/{{ child.id }}">{{ child.title }}</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-        <div class="content" [ngClass]="{'edit': isEditOn(), 'col-md-9': pagesService.page.children.length > 0}" *ngFor="let pageContent of pagesService.page.pageContents">
-            <div *ngIf="pageContent.contentType === 'Text'">
-                <app-content-text [pageContentId]="pageContent.id" [textContent]="pageContent.textContent"></app-content-text>
-            </div>
-            <div *ngIf="pageContent.contentType === 'Calendar'">
-                <app-content-calendar [pageContent]='pageContent'></app-content-calendar>
-            </div>
-            <div *ngIf="pageContent.contentType === 'Tabs'">
-                <app-content-tabs [pageContent]='pageContent'></app-content-tabs>
-            </div>
-            <div *ngIf="pageContent.contentType === 'Files'">
-                <app-content-files [pageContent]='pageContent'></app-content-files>
+        <div [ngClass]="{'col-md-9': page.children.length > 0, 'col-md-12': page.children.length == 0}">
+            <div class="content" [ngClass]="{'edit': isEditOn()}" *ngFor="let pageContent of page.pageContents">
+                <div *ngIf="pageContent.contentType === 'Text'">
+                    <app-content-text [pageContentId]="pageContent.id" [textContent]="pageContent.textContent" [pageComponent]="this"></app-content-text>
+                </div>
+                <div *ngIf="pageContent.contentType === 'Calendar'">
+                    <app-content-calendar [pageContentId]='pageContent.id' [calendarContent]="pageContent.calendarContent" [pageComponent]="this"></app-content-calendar>
+                </div>
+                <div *ngIf="pageContent.contentType === 'Tabs'">
+                    <app-content-tabs [pageContentId]='pageContent.id' [tabContent]="pageContent.tabContent" [pageComponent]="this"></app-content-tabs>
+                </div>
+                <div *ngIf="pageContent.contentType === 'Files'">
+                    <app-content-files [pageContentId]='pageContent.id' [fileContent]="pageContent.fileContent" [pageComponent]="this"></app-content-files>
+                </div>
             </div>
         </div>
     </div>

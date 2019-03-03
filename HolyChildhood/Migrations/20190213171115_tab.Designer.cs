@@ -4,14 +4,16 @@ using HolyChildhood.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HolyChildhood.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190213171115_tab")]
+    partial class tab
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,15 +124,11 @@ namespace HolyChildhood.Migrations
 
                     b.Property<DateTime?>("EndDate");
 
-                    b.Property<int?>("EventTypeId");
-
-                    b.Property<bool>("IsRecurring");
-
                     b.Property<string>("Location");
 
                     b.Property<string>("Notes");
 
-                    b.Property<Guid?>("RecurrenceId");
+                    b.Property<bool>("Repeats");
 
                     b.Property<string>("Title");
 
@@ -138,24 +136,7 @@ namespace HolyChildhood.Migrations
 
                     b.HasIndex("CalendarId");
 
-                    b.HasIndex("EventTypeId");
-
                     b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("HolyChildhood.Models.EventType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Color");
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EventTypes");
                 });
 
             modelBuilder.Entity("HolyChildhood.Models.File", b =>
@@ -166,30 +147,13 @@ namespace HolyChildhood.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<int>("FileContentId");
-
                     b.Property<string>("Title");
 
                     b.Property<string>("Type");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileContentId");
-
                     b.ToTable("Files");
-                });
-
-            modelBuilder.Entity("HolyChildhood.Models.FileContent", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("FileType");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FileContents");
                 });
 
             modelBuilder.Entity("HolyChildhood.Models.MenuItem", b =>
@@ -238,8 +202,6 @@ namespace HolyChildhood.Migrations
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue("Text");
 
-                    b.Property<int?>("FileContentId");
-
                     b.Property<bool>("HasTitle");
 
                     b.Property<int>("Index");
@@ -255,8 +217,6 @@ namespace HolyChildhood.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CalendarContentId");
-
-                    b.HasIndex("FileContentId");
 
                     b.HasIndex("PageId");
 
@@ -275,7 +235,7 @@ namespace HolyChildhood.Migrations
 
                     b.Property<int>("Index");
 
-                    b.Property<int>("TabContentId");
+                    b.Property<int?>("TabContentId");
 
                     b.Property<int?>("TextContentId");
 
@@ -456,18 +416,6 @@ namespace HolyChildhood.Migrations
                     b.HasOne("HolyChildhood.Models.Calendar", "Calendar")
                         .WithMany("Events")
                         .HasForeignKey("CalendarId");
-
-                    b.HasOne("HolyChildhood.Models.EventType", "EventType")
-                        .WithMany()
-                        .HasForeignKey("EventTypeId");
-                });
-
-            modelBuilder.Entity("HolyChildhood.Models.File", b =>
-                {
-                    b.HasOne("HolyChildhood.Models.FileContent")
-                        .WithMany("Files")
-                        .HasForeignKey("FileContentId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HolyChildhood.Models.Page", b =>
@@ -487,10 +435,6 @@ namespace HolyChildhood.Migrations
                         .WithMany()
                         .HasForeignKey("CalendarContentId");
 
-                    b.HasOne("HolyChildhood.Models.FileContent", "FileContent")
-                        .WithMany()
-                        .HasForeignKey("FileContentId");
-
                     b.HasOne("HolyChildhood.Models.Page", "Page")
                         .WithMany("PageContents")
                         .HasForeignKey("PageId")
@@ -507,10 +451,9 @@ namespace HolyChildhood.Migrations
 
             modelBuilder.Entity("HolyChildhood.Models.Tab", b =>
                 {
-                    b.HasOne("HolyChildhood.Models.TabContent", "TabContent")
+                    b.HasOne("HolyChildhood.Models.TabContent")
                         .WithMany("Tabs")
-                        .HasForeignKey("TabContentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("TabContentId");
 
                     b.HasOne("HolyChildhood.Models.TextContent", "TextContent")
                         .WithMany()

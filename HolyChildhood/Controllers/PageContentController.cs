@@ -27,8 +27,9 @@ namespace HolyChildhood.Controllers
         {
             var pageContent = await dbContext.PageContents
                 .Include(pc => pc.TextContent)
-                .Include(pc => pc.TabContent).ThenInclude(tc => tc.Tabs)//.ThenInclude(t => t.TextContent)
+                .Include(pc => pc.TabContent).ThenInclude(tc => tc.Tabs).ThenInclude(t => t.TextContent)
                 .Include(pc => pc.CalendarContent).ThenInclude(cc => cc.Calendar).ThenInclude(c => c.Events)
+                .Include(pc => pc.FileContent).ThenInclude(fc => fc.Files)
                 .FirstOrDefaultAsync(pc => pc.Id == id);
 
             if (pageContent == null) return NotFound();
@@ -76,29 +77,9 @@ namespace HolyChildhood.Controllers
                 if (content.Index >= index) index = content.Index + 1;
             }
 
-            var pc = new PageContent
-            {
-                ContentType = pageContent.ContentType,
-                HasTitle = pageContent.HasTitle,
-                Title = pageContent.Title,
-                Page = page
-            };
+            pageContent.Index = index;
 
-            switch (pc.ContentType)
-            {
-                case "Text":
-                    pc.TextContent = new TextContent();
-                    break;
-                case "Tabs":
-                    pc.TabContent = new TabContent();
-                    break;
-                case "Calendar":
-                    // @TODO Remove hard-coded calendar once it is fully implemented.
-                    pc.CalendarContent = new CalendarContent { CalendarId = 1 };
-                    break;
-            }
-
-            dbContext.PageContents.AddAsync(pc);
+            dbContext.PageContents.AddAsync(pageContent);
             await dbContext.SaveChangesAsync();
 
             return CreatedAtAction("GetPageContent", new { id = pageContent.Id }, pageContent);
@@ -111,8 +92,37 @@ namespace HolyChildhood.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<PageContent>> DeletePageContent(int id)
         {
-            var pageContent = await dbContext.PageContents.FindAsync(id);
+            var pageContent = await dbContext.PageContents
+                .Include(pc => pc.TextContent)
+                .Include(pc => pc.TabContent).ThenInclude(tc => tc.Tabs).ThenInclude(t => t.TextContent)
+                .Include(pc => pc.CalendarContent).ThenInclude(cc => cc.Calendar).ThenInclude(c => c.Events)
+                .Include(pc => pc.FileContent).ThenInclude(fc => fc.Files)
+                .FirstOrDefaultAsync(pc => pc.Id == id);
+
             if (pageContent == null) return NotFound();
+
+            if (pageContent.TextContent != null)
+            {
+                dbContext.TextContents.Remove(pageContent.TextContent);
+            } else if (pageContent.TabContent != null)
+            {
+                foreach (var tab in pageContent.TabContent.Tabs)
+                {
+                    dbContext.TextContents.Remove(tab.TextContent);
+                }
+                dbContext.TabContents.Remove(pageContent.TabContent);
+            } else if (pageContent.FileContent != null)
+            {
+                foreach (var file in pageContent.FileContent.Files)
+                {
+                    dbContext.Files.Remove(file);
+                }
+
+                dbContext.FileContents.Remove(pageContent.FileContent);
+            } else if (pageContent.CalendarContent != null)
+            {
+                dbContext.CalendarContents.Remove(pageContent.CalendarContent);
+            }
 
             dbContext.PageContents.Remove(pageContent);
             await dbContext.SaveChangesAsync();

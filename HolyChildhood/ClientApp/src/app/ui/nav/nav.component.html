@@ -1,3 +1,60 @@
+<!-- Dialogs -->
+<span *ngIf="isEdit()">
+    <ng-template #pageDialog>
+        <div class="modal-header">
+            <h4 class="modal-title">Page</h4>
+            <button type="button" class="close pull-right" (click)="modalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <span class="ui-float-label" style="margin: 15px">
+                <input id="pageTitle" type="text" size="30" pInputText [(ngModel)]="page.title">
+                <label for="pageTitle">Page Title</label>
+            </span>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="modalRef.hide(); addPage()"><i class="fas fa-check"></i> Ok</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> Cancel</button>
+        </div>
+    </ng-template>
+
+    <ng-template #menuDialog>
+        <div class="modal-header">
+            <h4 class="modal-title">Menu</h4>
+            <button type="button" class="close pull-right" (click)="modalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <span class="ui-float-label" style="margin: 15px">
+                <input id="menuName" type="text" size="30" pInputText [(ngModel)]="menu.name">
+                <label for="menuName">Menu Name</label>
+            </span>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="modalRef.hide(); addMenu()"><i class="fas fa-check"></i> Ok</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> Cancel</button>
+        </div>
+    </ng-template>
+
+    <ng-template #confirmationDialog>
+        <div class="modal-header">
+            <h4 class="modal-title">{{ confirmModel.title }}</h4>
+            <button type="button" class="close pull-right" (click)="modalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <i class="fas fa-question"></i> {{ confirmModel.message }}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="modalRef.hide(); confirmModel.onOk()"><i class="fas fa-check"></i> Yes</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> No</button>
+        </div>
+    </ng-template>
+
+</span>
 
 <nav class="navbar navbar-expand-md navbar-dark">
     <!--<div class="navbar-brand">-->
@@ -22,44 +79,19 @@
                     <a *ngFor="let page of menuItem.pages" class="dropdown-item" routerLink="/pages/{{ page.id }}">{{ page.title }}</a>
 
                     <div *ngIf="isEdit()" class="dropdown-divider"></div>
-                    <a *ngIf="isEdit()" class="dropdown-item" (click)="showPageDialog(menuItem)">
+                    <a *ngIf="isEdit()" class="dropdown-item" (click)="showPageDialog(menuItem)" style="cursor: pointer;">
                         <i class="fas fa-plus"></i><i> Add Page...</i>
                     </a>
-                    <a *ngIf="isEdit()" class="dropdown-item" (click)="showMenuDialog(menuItem)">
+                    <a *ngIf="isEdit()" class="dropdown-item" (click)="showMenuDialog(menuItem)" style="cursor: pointer;">
                         <i class="fas fa-pencil-alt"></i><i> Edit Menu...</i>
                     </a>
-                    <a *ngIf="isEdit() && menuItem.pages.length == 0" class="dropdown-item" (click)="deleteMenu(menuItem)">
+                    <a *ngIf="isEdit() && menuItem.pages.length == 0" class="dropdown-item" (click)="deleteMenu(menuItem)" style="cursor: pointer;">
                         <i class="fas fa-trash"></i><i> Delete Menu</i>
                     </a>
                 </div>
             </li>
 
             <div *ngIf="isEdit()">
-                <p-confirmDialog key="menuDelete" header="Delete Menu?" icon="fa fa-question-circle" width="425"></p-confirmDialog>
-
-                <p-dialog header="Menu" [modal]="true" [responsive]="true" [width]="450" [(visible)]="displayMenuDialog">
-                    <span class="ui-float-label" style="margin: 15px">
-                        <input id="menuName" type="text" size="30" pInputText [(ngModel)]="menu.name">
-                        <label for="menuName">Menu Name</label>
-                    </span>
-                    <p-footer>
-                        <button type="button" pButton icon="pi pi-check" (click)="addMenu()" label="OK"></button>
-                        <button type="button" pButton icon="pi pi-close" (click)="displayMenuDialog=false" label="Cancel" class="ui-button-secondary"></button>
-                    </p-footer>
-                </p-dialog>
-
-                <p-dialog header="Page" [modal]="true" [responsive]="true" [width]="450" [(visible)]="displayPageDialog">
-                    <span class="ui-float-label" style="margin: 15px">
-                        <input id="pageTitle" type="text" size="30" pInputText [(ngModel)]="page.title">
-                        <label for="pageTitle">Page Title</label>
-                    </span>
-                    <p-footer>
-                        <button type="button" pButton icon="pi pi-check" (click)="addPage()" label="OK"></button>
-                        <button type="button" pButton icon="pi pi-close" (click)="displayPageDialog=false" label="Cancel" class="ui-button-secondary"></button>
-                    </p-footer>
-
-                </p-dialog>
-
                 <button class="btn btn-sm btn-success adminButton" style="margin-top: 8px" (click)="showMenuDialog(null)">
                     <i class="fas fa-plus"></i> Add Menu
                 </button>

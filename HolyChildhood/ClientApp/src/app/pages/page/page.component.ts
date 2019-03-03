@@ -1,10 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 
+import { SelectItem } from 'primeng/api';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
+
+import { Page } from '../../shared/models/page';
+import { Confirm } from '../../shared/models/confirm';
+import { CalendarContent, FileContent, PageContent, TabContent, TextContent } from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
-import { ConfirmationService } from 'primeng/api';
-import { Page } from '../../shared/models/page';
+import { NavService } from '../../shared/services/nav.service';
 
 @Component({
   selector: 'app-page',
@@ -13,20 +18,43 @@ import { Page } from '../../shared/models/page';
 })
 export class PageComponent implements OnInit {
 
-    displayEditPageDialog = false;
+    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
+    @ViewChild('editPageDialog') editPageDialog: ElementRef;
+    @ViewChild('pdfTypeDialog') pdfTypeDialog: ElementRef;
+    @ViewChild('addSubPageDialog') addSubPageDialog: ElementRef;
+    modalRef: BsModalRef;
+    confirmModel: Confirm;
 
-    pageEdit: Page;
+    pageId: string | number;
+    page: Page;
+    content: PageContent;
+
+    pageEdit = {} as Page;
+    pageAdd = {} as Page;
+
+    pdfTypes: SelectItem[] = [
+        {label: 'Select PDF Type', value: null},
+        {label: 'Bulletin', value: 'bulletin'},
+        {label: 'Schedule', value: 'schedule'},
+        {label: 'Other', value: 'other'}
+    ];
 
     constructor(private authService: AuthService,
                 public pagesService: PagesService,
-                private confirmService: ConfirmationService,
-                private route: ActivatedRoute) {}
+                private route: ActivatedRoute,
+                private router: Router,
+                private nav: NavService,
+                private modalService: BsModalService) {}
 
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
-            const pageId = params.get('id');
-            this.pagesService.loadPage(pageId);
+            this.pageId = params.get('id');
+            this.loadPage();
         });
+    }
+
+    loadPage() {
+        this.pagesService.getPage(this.pageId).subscribe(page => this.page = page);
     }
 
     isAuthenticated(): boolean {
@@ -37,28 +65,77 @@ export class PageComponent implements OnInit {
         return this.isAuthenticated() && this.authService.isEdit();
     }
 
+    showDialog(dialog) {
+        this.modalRef = this.modalService.show(dialog);
+    }
+
     deletePage() {
-        this.confirmService.confirm({
+        this.confirmModel = {
+            title: 'Delete Page?',
             message: 'Are you sure you want to delete this page?',
-            key: 'pageDelete',
-            accept: () => {
-                this.pagesService.deletePage();
+            onOk: () => {
+                this.pagesService.deletePage(this.pageId).subscribe(() => {
+                    this.nav.loadMenu();
+                    if (this.page.parent) {
+                        this.router.navigate([`/pages/${this.page.parent.id}`]).then();
+                    } else {
+                        this.router.navigate(['/home']).then();
+                    }
+                });
             }
+        } as Confirm;
+        this.showDialog(this.confirmDialog);
+    }
+
+    createContent(contentType) {
+        this.content = {} as PageContent;
+        this.content.contentType = contentType;
+        this.content.page = this.page;
+        if (contentType === 'Text') {
+            this.content.textContent = {} as TextContent;
+            this.addContent();
+        } else if (contentType === 'Tabs') {
+            this.content.tabContent = {} as TabContent;
+            this.addContent();
+        } else if (contentType === 'Files') {
+            this.content.fileContent = {} as FileContent;
+            this.showDialog(this.pdfTypeDialog);
+        } else if (contentType === 'Calendar') {
+            // @TODO Replace calendarId with specified id
+            this.content.calendarContent = { calendarId: 1 } as CalendarContent;
+            this.addContent();
+        }
+    }
+
+    addContent() {
+        this.pagesService.addPageContent(this.content).subscribe(() => {
+            this.loadPage();
         });
     }
 
-    addContent(contentType) {
-        this.pagesService.addPageContent(contentType);
-    }
-
     editPage() {
-        this.pageEdit = Object.assign({}, this.pagesService.page);
-        this.displayEditPageDialog = true;
+        this.pageEdit = Object.assign({}, this.page);
+        this.showDialog(this.editPageDialog);
     }
 
     updatePage() {
-        this.pagesService.updatePage(this.pageEdit);
-        this.displayEditPageDialog = false;
+        this.pagesService.updatePage(this.pageEdit).subscribe(() => {
+            this.nav.loadMenu();
+            this.loadPage();
+        });
+    }
+
+    showAddSubPageDialog() {
+        this.pageAdd = {} as Page;
+        this.pageAdd.parent = this.page;
+        this.showDialog(this.addSubPageDialog);
+    }
+
+    addSubPage() {
+        this.pagesService.addPage(this.pageAdd).subscribe(res => {
+            this.nav.loadMenu();
+            this.router.navigate([`/pages/${res.id}`]).then();
+        });
     }
 
 }

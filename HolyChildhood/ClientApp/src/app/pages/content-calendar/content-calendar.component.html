@@ -1,77 +1,68 @@
-<p-dialog *ngIf="selectedEvent" [(visible)]="showEventDialog" [width]="400">
-    <p-header>
-        {{ selectedEvent.title }}
-    </p-header>
-    <div class="row">
-        <div class="col-3">
-            Description
-        </div>
-        <div class="col-9">
-            {{ selectedEvent.description }}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-3">
-            Date/Time
-        </div>
-        <div class="col-9">
-            {{ selectedEvent.start.format('MM/DD/YYYY hh:mm A') }}
-        </div>
-    </div>
-    <p-footer>
-        <button type="button" pButton icon="pi pi-times" (click)="showEventDialog=false" label="Close"></button>
-    </p-footer>
-</p-dialog>
-
-<div *ngIf="showAddEvent">
-    <div class="form-group">
-        <label for="eventTitle">Title</label>
-        <input id="eventTitle" class="form-control" type="text" size="50" pInputText [(ngModel)]="newEvent.title" placeholder="Enter Title">
-    </div>
-    <div class="form-group">
-        <label>Date</label>
-        <div class="input-group">
-            <input class="form-control" placeholder="Select Date" [(ngModel)]="newEvent.startDate" ngbDatepicker #d="ngbDatepicker" (click)="d.toggle()">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
-                    <i class="far fa-calendar-alt"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label>Time</label>
-        <ngb-timepicker [(ngModel)]="newEvent.startTime" [meridian]="true"></ngb-timepicker>
-    </div>
-    <div class="form-group">
-        <label for="eventLocation">Location</label>
-        <input id="eventLocation" class="form-control" type="text" size="50" pInputText [(ngModel)]="newEvent.location" placeholder="Enter Location">
-    </div>
-    <div class="form-group">
-        <label for="descriptionTextArea">Description</label>
-        <textarea class="form-control" id="descriptionTextArea" rows="4" [(ngModel)]="newEvent.description" placeholder="Enter Description"></textarea>
-    </div>
-    <div>
-        <button class="btn btn-sm btn-success adminButton" (click)="createEvent()">
-            <i class="fas fa-plus"></i> Add
-        </button>
-        <button class="btn btn-sm btn-danger adminButton" (click)="cancelAddEvent()">
-            <i class="fas fa-ban"></i> Cancel
+<ng-template #addEventDialog>
+    <div class="modal-header">
+        <h4 class="modal-title">Event</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
         </button>
     </div>
-</div>
+    <div class="modal-body">
+        <div class="form-group">
+            <span class="ui-float-label">
+                <input id="titleInput" type="text" size="30" pInputText [(ngModel)]="newEvent.title">
+                <label for="titleInput">Event Title</label>
+            </span>
+        </div>
 
-<div *ngIf="!showAddEvent">
-    <button *ngIf="isAuthenticated()" class="btn btn-sm btn-success adminButton" (click)="addEvent()" style="margin-left: 0; margin-bottom:15px">
+        <div class="form-group">
+            <span class="ui-float-label">
+                <p-calendar id="startDate" [(ngModel)]="newEvent.startDate" [showIcon]="true"></p-calendar>
+                <label for="startDate">Event Date</label>
+            </span>
+        </div>
+        <div class="form-group">
+            <p-checkbox [(ngModel)]="newEvent.allDay" label="All Day?" binary="true"></p-checkbox>
+        </div>
+        <div class="form-group">
+            <span class="ui-float-label">
+                <p-calendar id="startTime" [(ngModel)]="newEvent.startTime" [showIcon]="true"
+                            [timeOnly]="true" hourFormat="12" icon="pi pi-clock" [disabled]="newEvent.allDay"></p-calendar>
+                <label for="startTime">Event Time</label>
+            </span>
+        </div>
+        <div class="form-group">
+            <span class="ui-float-label">
+                <input id="eventLocation" class="form-control" type="text" size="50" pInputText [(ngModel)]="newEvent.location">
+                <label for="eventLocation">Location</label>
+            </span>
+        </div>
+        <div class="form-group">
+            <span class="ui-float-label">
+                <textarea class="form-control" id="descriptionTextArea" pInputTextarea rows="4" [(ngModel)]="newEvent.description"></textarea>
+                <label for="descriptionTextArea">Description</label>
+            </span>
+        </div>
+        <div class="form-group">
+            <p-checkbox [(ngModel)]="newEvent.isRecurring" label="Is Recurring?" binary="true"></p-checkbox>
+        </div>
+        <div class="form-group" *ngIf="newEvent.isRecurring">
+            <p-selectButton [options]="recurrenceTypes" [(ngModel)]="newEvent.recurrenceType"></p-selectButton>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="modalRef.hide(); createEvent()"><i class="fas fa-check"></i> Ok</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> Cancel</button>
+    </div>
+</ng-template>
+
+<div>
+    <button *ngIf="isAuthenticated()" class="btn btn-sm btn-outline-success" (click)="addEvent()" style="margin-left: 0; margin-bottom:15px">
         <i class="fas fa-plus"></i> Add Event
     </button>
-    <div class="row">
-        <div class="col-12">
-            <div id='calendar'></div>
-        </div>
-    </div>
+
+    <div id='calendar'></div>
+
     <div class="adminPanel" *ngIf="isEditOn()">
-        <button *ngIf="!pageContent.editing" class="btn btn-sm btn-danger adminButton" (click)="deleteContent()">
+        <button class="btn btn-sm btn-danger adminButton" (click)="deleteContent()">
             <i class="fas fa-trash-alt"></i> Delete
         </button>
     </div>

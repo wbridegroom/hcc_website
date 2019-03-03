@@ -1,60 +1,67 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-import { PageContent } from '../../shared/models/page-content';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
+import {SelectItem} from 'primeng/api';
+
+import { CalendarContent } from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { EventService } from '../../shared/services/event.service';
 import { Event } from '../../shared/models/calendar';
-import { NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
+import { PageComponent } from '../page/page.component';
 
 import 'fullcalendar';
 
 @Component({
     selector: 'app-content-calendar',
     templateUrl: './content-calendar.component.html',
-    styleUrls: ['./content-calendar.component.css'],
-    providers: [NgbDatepickerConfig]
+    styleUrls: ['./content-calendar.component.css']
 })
 export class ContentCalendarComponent implements OnInit {
 
-    @Input() pageContent: PageContent;
+    @Input() pageComponent: PageComponent;
+    @Input() pageContentId: number;
+    @Input() calendarContent: CalendarContent;
 
-    options: any;
-    header: any;
-    events: any[];
-    showEventDialog = false;
-    showAddEvent = false;
+    @ViewChild('addEventDialog') addEventDialog: ElementRef;
+    modalRef: BsModalRef;
+
     newEvent: any;
-    selectedEvent: any;
+
+    calendar: any;
+
+    recurrenceTypes: SelectItem[];
 
     constructor(private authService: AuthService,
                 private pagesService: PagesService,
                 private eventService: EventService,
-                dateConfig: NgbDatepickerConfig) {
+                private modalService: BsModalService,
+                private http: HttpClient) {
 
-        dateConfig.firstDayOfWeek = 7;
+        this.recurrenceTypes = [
+            { label: 'Annually', value: 'annually' },
+            { label: 'Monthly', value: 'monthly' },
+            { label: 'Weekly', value: 'weekly' }
+        ];
     }
 
     ngOnInit() {
-
-        this.loadEvents();
-        this.header = {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month, agendaWeek,agendaDay,listMonth'
-        };
+        $('#calendar').fullCalendar({
+            themeSystem: 'bootstrap4',
+            events: (start, end, timezone, callback) => this.getEvents(start, end, callback),
+            eventRender: (event, element) => this.renderEvent(event, element)
+        });
     }
 
-    loadEvents() {
-        this.eventService.getEvents().subscribe(events => {
-            this.events = events;
-            $('#calendar').fullCalendar({
-                header: this.header,
-                events: this.events,
-                eventClick: (calEvent, jsEvent, view) => this.onClick(calEvent, jsEvent, view),
-                eventRender: this.renderEvent
-            });
+    getEvents(start, end, success) {
+        this.http.get(`/api/event/${start.toISOString()}/${end.toISOString()}`).subscribe(events => {
+            success(events);
         });
+    }
+
+    showDialog(dialog) {
+        this.modalRef = this.modalService.show(dialog);
     }
 
     renderEvent(event, element) {
@@ -67,45 +74,50 @@ export class ContentCalendarComponent implements OnInit {
             html: true
         });
     }
-
-    onClick(calEvent, jsEvent, view) {
-        this.selectedEvent = calEvent;
-        this.showEventDialog = true;
-    }
+    //
+    // onClick(calEvent, jsEvent, view) {
+    //     this.selectedEvent = calEvent;
+    //     this.showEventDialog = true;
+    // }
 
     addEvent() {
+        const startTime = new Date();
+        startTime.setHours(8);
+        startTime.setMinutes(0);
         this.newEvent = {
             title: null,
             startDate: null,
-            startTime: { 'hour': 8, 'minute': 0 },
+            startTime: startTime,
             endDate: null,
             endTime: null,
             description: null,
             location: null,
-            allDay: false
+            allDay: false,
+            isRecurring: false,
+            recurrenceType: 'annually'
         };
-        this.showAddEvent = true;
-    }
-
-    cancelAddEvent() {
-        this.showAddEvent = false;
-        this.loadEvents();
+        this.showDialog(this.addEventDialog);
     }
 
     createEvent() {
-        this.showAddEvent = false;
         const date = this.newEvent.startDate;
         const time = this.newEvent.startTime;
         const event = {
-            id: 0,
+            calendarId: 1,
             title: this.newEvent.title,
             description: this.newEvent.description,
             location: this.newEvent.location,
-            start: new Date(date.year, date.month - 1, date.day, time.hour, time.minute, 0, 0),
+            startYear: date.getFullYear(),
+            startMonth: date.getMonth() + 1,
+            startDay: date.getDate(),
+            startHour: time.getHours(),
+            startMinute: time.getMinutes(),
             end: null,
-            allDay: false
+            allDay: this.newEvent.allDay,
+            isRecurring: this.newEvent.isRecurring,
+            eventTypeId: 1
         } as Event;
-        this.eventService.addEvent(event).subscribe(() => this.loadEvents());
+        this.eventService.addEvent(event).subscribe(() => this.calendar.refetchEvents());
     }
 
     isAuthenticated(): boolean {
@@ -117,10 +129,9 @@ export class ContentCalendarComponent implements OnInit {
     }
 
     deleteContent() {
-        const id = this.pageContent.id;
-        console.log(`Delete Page Content Id: ${id}`);
+        const id = this.pageContentId;
         this.pagesService.deletePageContent(id).subscribe(() => {
-            this.pagesService.reloadPage();
+            this.pageComponent.loadPage();
         });
     }
 
