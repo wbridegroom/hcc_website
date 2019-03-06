@@ -20,9 +20,9 @@ namespace HolyChildhood.ViewModels
         // Recurrence Data
         public bool IsRecurring { get; set; }
         public Guid? RecurrenceId { get; set; }
-        public bool Annualy { get; set; }
-        public bool Monthly { get; set; }
-        public bool Weekly { get; set; }
+        public string RecurrenceType { get; set; }
+        public string RecurrenceMonthlyType { get; set; }
+        public int RecurrenceMonthlyWeek { get; set; }
         public bool UpdateRecurrence { get; set; }
 
         // Compatibility for Timezone offsets when adding/editing events
@@ -32,9 +32,7 @@ namespace HolyChildhood.ViewModels
         public int StartHour { get; set; }
         public int StartMinute { get; set; }
 
-        public int EndMonth { get; set; }
-        public int EndDay { get; set; }
-        public int EndYear { get; set; }
+        public bool HasEndTime { get; set; }
         public int EndHour { get; set; }
         public int EndMinute { get; set; }
     }

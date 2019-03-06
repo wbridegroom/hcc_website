@@ -63,6 +63,7 @@ namespace HolyChildhood.Controllers
                     Id = @event.Id,
                     Title = @event.Title,
                     Start = @event.BeginDate,
+                    End = @event.EndDate,
                     Description = @event.Description,
                     Notes = @event.Notes,
                     Location = @event.Location,
@@ -83,49 +84,47 @@ namespace HolyChildhood.Controllers
         [Authorize]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutEvent(int id, EventViewModel @event)
+        public async Task<IActionResult> PutEvent(int id, EventViewModel evt)
         {
-            if (id != @event.Id) return BadRequest();
+            if (id != evt.Id) return BadRequest();
 
             var dbEvent = await dbContext.Events.FindAsync(id);
             if (dbEvent == null) return NotFound();
 
             var originalBeginDate = dbEvent.BeginDate;
-            var newBeginDate = new DateTime(@event.StartYear, @event.StartMonth, @event.StartDay, @event.StartHour, @event.StartMinute, 0);
-
-            var originalEndDate = dbEvent.EndDate;
+            var newBeginDate = new DateTime(evt.StartYear, evt.StartMonth, evt.StartDay, evt.StartHour, evt.StartMinute, 0);
             DateTime? newEndDate = null;
-
-            dbEvent.Title = @event.Title;
-            dbEvent.BeginDate = newBeginDate;
-            dbEvent.Description = @event.Description;
-            dbEvent.Location = @event.Location;
-            dbEvent.Notes = @event.Notes;
-            if (@event.EndYear > 0)
+            if (evt.HasEndTime)
             {
-                newEndDate = new DateTime(@event.EndYear, @event.EndMonth, @event.EndDay, @event.EndHour, @event.EndMinute, 0);
-                dbEvent.EndDate = newEndDate;
+                newEndDate = new DateTime(evt.StartYear, evt.StartMonth, evt.StartDay, evt.EndHour, evt.EndMinute, 0);
             }
 
-            if (dbEvent.IsRecurring && @event.UpdateRecurrence)
+            dbEvent.Title = evt.Title;
+            dbEvent.BeginDate = newBeginDate;
+            dbEvent.EndDate = newEndDate;
+            dbEvent.Description = evt.Description;
+            dbEvent.Location = evt.Location;
+            dbEvent.Notes = evt.Notes;
+
+            if (dbEvent.IsRecurring && evt.UpdateRecurrence)
             {
                 var recurringEvents = await dbContext
                     .Events
-                    .Where(e => e.RecurrenceId == @event.RecurrenceId && e.BeginDate > dbEvent.BeginDate)
+                    .Where(e => e.RecurrenceId == evt.RecurrenceId && e.BeginDate > dbEvent.BeginDate)
                     .ToListAsync();
                 foreach (var recurringEvent in recurringEvents)
                 {
                     var offset = newBeginDate.Subtract(originalBeginDate);
                     recurringEvent.BeginDate = recurringEvent.BeginDate.Add(offset);
-                    if (@event.EndYear > 0 && newEndDate.HasValue && originalEndDate.HasValue)
+                    if (evt.HasEndTime)
                     {
-                        offset = newEndDate.Value.Subtract(originalEndDate.Value);
-                        recurringEvent.EndDate = recurringEvent.EndDate?.Add(offset);
+                        var begin = recurringEvent.BeginDate;
+                        recurringEvent.EndDate = new DateTime(begin.Year, begin.Month, begin.Day, evt.EndHour, evt.EndMinute, 0);
                     }
-                    recurringEvent.Title = @event.Title;
-                    recurringEvent.Description = @event.Description;
-                    recurringEvent.Location = @event.Location;
-                    recurringEvent.Notes = @event.Notes;
+                    recurringEvent.Title = evt.Title;
+                    recurringEvent.Description = evt.Description;
+                    recurringEvent.Location = evt.Location;
+                    recurringEvent.Notes = evt.Notes;
                 }
             } 
 
@@ -151,66 +150,86 @@ namespace HolyChildhood.Controllers
             await dbContext.Calendars.FindAsync(evt.CalendarId);
 
             var beginDate = new DateTime(evt.StartYear, evt.StartMonth, evt.StartDay, evt.StartHour, evt.StartMinute, 0);
+            DateTime? endDate = null;
+            if (evt.HasEndTime)
+            {
+                endDate = new DateTime(evt.StartYear, evt.StartMonth, evt.StartDay, evt.EndHour, evt.EndMinute, 0);
+            }
 
             var dbEvent = new Event
             {
                 Title = evt.Title,
                 BeginDate = beginDate,
+                EndDate = endDate,
                 Description = evt.Description,
                 Location = evt.Location,
                 Notes = evt.Notes,
                 EventTypeId = evt.EventTypeId,
-                IsRecurring = evt.IsRecurring
+                IsRecurring = evt.IsRecurring,
+                AllDay = evt.AllDay || evt.EventTypeId == 4
             };
 
-            if (evt.EndYear > 0)
-            {
-                var endDate = new DateTime(evt.EndYear, evt.EndMonth, evt.EndDay, evt.EndHour, evt.EndMinute, 0);
-                dbEvent.EndDate = endDate;
-            }
             dbContext.Events.Add(dbEvent);
 
             if (evt.IsRecurring)
             {
                 dbEvent.RecurrenceId = Guid.NewGuid();
 
-                if (evt.Annualy)
+                if (!string.IsNullOrEmpty(evt.RecurrenceType) && evt.RecurrenceType.Equals("annually"))
                 {
-                    for (var i = 0; i < 5; i++)
+                    for (var i = 1; i < 5; i++)
                     {
-                        var startDate = dbEvent.BeginDate.AddYears(1);
-                        var recurringEvent = CreateRecurringEvent(dbEvent, startDate);
-                        if (evt.EndYear > 0)
-                        {
-                            var endDate = dbEvent.EndDate?.AddYears(1);
-                            recurringEvent.EndDate = endDate;
-                        }
+                        var startDate = dbEvent.BeginDate.AddYears(i);
+                        var recurringEvent = CreateRecurringEvent(dbEvent, startDate, evt);
                         dbContext.Add(recurringEvent);
                     }
-                } else if (evt.Monthly)
+                } else if (!string.IsNullOrEmpty(evt.RecurrenceType) && evt.RecurrenceType.Equals("monthly"))
                 {
-                    for (var i = 0; i < 60; i++)
+                    if (!string.IsNullOrEmpty(evt.RecurrenceMonthlyType) && evt.RecurrenceMonthlyType.Equals("date"))
                     {
-                        var startDate = dbEvent.BeginDate.AddMonths(1);
-                        var recurringEvent = CreateRecurringEvent(dbEvent, startDate);
-                        if (evt.EndYear > 0)
+                        for (var i = 1; i < 60; i++)
                         {
-                            var endDate = dbEvent.EndDate?.AddYears(1);
-                            recurringEvent.EndDate = endDate;
+                            var startDate = dbEvent.BeginDate.AddMonths(i);
+                            var recurringEvent = CreateRecurringEvent(dbEvent, startDate, evt);
+                            dbContext.Add(recurringEvent);
                         }
-                        dbContext.Add(recurringEvent);
+                    } else if (!string.IsNullOrEmpty(evt.RecurrenceMonthlyType) && evt.RecurrenceMonthlyType.Equals("week"))
+                    {
+                        var week = evt.RecurrenceMonthlyWeek;
+                        
+                        var day = dbEvent.BeginDate.DayOfWeek;
+                        var date = new DateTime(dbEvent.BeginDate.Year, dbEvent.BeginDate.Month, 1, dbEvent.BeginDate.Hour, dbEvent.BeginDate.Minute, 0);
+                        for (var i = 1; i < 60; i++)
+                        {
+                            var index = 0;
+                            var startDate = date.AddMonths(i);
+                            var month = startDate.Month;
+                            var lastDate = startDate;
+                            while (month == startDate.Month)
+                            {
+                                if (startDate.DayOfWeek == day)
+                                {
+                                    index++;
+                                    lastDate = startDate;
+                                    if (index == week) break;
+                                }
+                                startDate = startDate.AddDays(1);
+                            }
+                            if (week == 5)
+                            {
+                                startDate = lastDate;
+                            }
+                            var recurringEvent = CreateRecurringEvent(dbEvent, startDate, evt);
+                            dbContext.Add(recurringEvent);
+                        }
+                        
                     }
-                } else if (evt.Weekly)
+                } else if (!string.IsNullOrEmpty(evt.RecurrenceType) && evt.RecurrenceType.Equals("weekly"))
                 {
-                    for (var i = 0; i < 260; i++)
+                    for (var i = 1; i < 260; i++)
                     {
-                        var startDate = dbEvent.BeginDate.AddDays(7);
-                        var recurringEvent = CreateRecurringEvent(dbEvent, startDate);
-                        if (evt.EndYear > 0)
-                        {
-                            var endDate = dbEvent.EndDate?.AddYears(1);
-                            recurringEvent.EndDate = endDate;
-                        }
+                        var startDate = dbEvent.BeginDate.AddDays(i * 7);
+                        var recurringEvent = CreateRecurringEvent(dbEvent, startDate, evt);
                         dbContext.Add(recurringEvent);
                     }
                 }
@@ -235,7 +254,7 @@ namespace HolyChildhood.Controllers
             {
                 var recurringEvents = await dbContext
                     .Events
-                    .Where(e => e.RecurrenceId == @event.RecurrenceId && e.BeginDate > @event.BeginDate)
+                    .Where(e => e.RecurrenceId == @event.RecurrenceId && e.BeginDate >= @event.BeginDate)
                     .ToListAsync();
                 foreach (var recurringEvent in recurringEvents)
                 {
@@ -252,7 +271,7 @@ namespace HolyChildhood.Controllers
             return @event;
         }
 
-        private Event CreateRecurringEvent(Event originalEvent, DateTime nextDate)
+        private Event CreateRecurringEvent(Event originalEvent, DateTime nextDate, EventViewModel evt)
         {
             var recurringEvent = new Event
             {
@@ -261,10 +280,15 @@ namespace HolyChildhood.Controllers
                 Description = originalEvent.Description,
                 Location = originalEvent.Location,
                 Notes = originalEvent.Notes,
+                AllDay = originalEvent.AllDay,
                 EventTypeId = originalEvent.EventTypeId,
                 IsRecurring = originalEvent.IsRecurring,
                 RecurrenceId = originalEvent.RecurrenceId
             };
+            if (evt.HasEndTime)
+            {
+                recurringEvent.EndDate = new DateTime(nextDate.Year, nextDate.Month, nextDate.Day, evt.EndHour, evt.EndMinute, 0);
+            }
 
             return recurringEvent;
         }

@@ -22,6 +22,8 @@ export interface Event {
     isRecurring: boolean;
     recurrenceId: string;
     recurrenceType: string;
+    recurrenceMonthlyType: string;
+    recurrenceMonthlyWeek: number;
     updateRecurrence: boolean;
 
     // support EventViewModel
@@ -30,9 +32,12 @@ export interface Event {
     startDay: number;
     startHour: number;
     startMinute: number;
-    endYear: number;
-    endMonth: number;
-    endDay: number;
+    hasEndTime: boolean;
     endHour: number;
     endMinute: number;
+
+    // other support properties
+    isEditing: boolean;
+    startTime: Date;
+    endTime: Date;
 }

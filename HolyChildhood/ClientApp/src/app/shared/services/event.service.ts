@@ -22,13 +22,27 @@ export class EventService {
         return this.httpClient.get<Event[]>('/api/event');
     }
 
-    public addEvent(event: Event) {
+    public saveEvent(event: Event) {
         const options = {
             headers: new HttpHeaders({
                 'Content-Type':  'application/json'
             })
         };
         console.log(event);
-        return this.httpClient.post<Event>('/api/event', event, options);
+        if (event.isEditing) {
+            return this.httpClient.put<Event>(`/api/event/${event.id}`, event, options);
+        } else {
+            return this.httpClient.post<Event>('/api/event', event, options);
+        }
+    }
+
+    public deleteEvent(event: Event) {
+        const options = {
+            headers: new HttpHeaders({
+                'Content-Type':  'application/json'
+            })
+        };
+
+        return this.httpClient.delete(`/api/event/${event.id}/${event.updateRecurrence}`, options);
     }
 }

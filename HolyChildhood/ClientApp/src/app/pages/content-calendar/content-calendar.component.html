@@ -6,51 +6,86 @@
         </button>
     </div>
     <div class="modal-body">
+        <div class="form-group" *ngIf="!event.isEditing">
+            <p-selectButton [options]="eventTypes" [(ngModel)]="event.eventTypeId"></p-selectButton>
+        </div>
         <div class="form-group">
             <span class="ui-float-label">
-                <input id="titleInput" type="text" size="30" pInputText [(ngModel)]="newEvent.title">
+                <input id="titleInput" type="text" size="30" pInputText [(ngModel)]="event.title">
                 <label for="titleInput">Event Title</label>
             </span>
         </div>
 
         <div class="form-group">
             <span class="ui-float-label">
-                <p-calendar id="startDate" [(ngModel)]="newEvent.startDate" [showIcon]="true"></p-calendar>
+                <p-calendar id="startDate" [(ngModel)]="event.start" [showIcon]="true"></p-calendar>
                 <label for="startDate">Event Date</label>
             </span>
         </div>
-        <div class="form-group">
-            <p-checkbox [(ngModel)]="newEvent.allDay" label="All Day?" binary="true"></p-checkbox>
+        <div class="form-group" *ngIf="!event.isEditing && event.eventTypeId == 1">
+            <p-checkbox [(ngModel)]="event.allDay" label="All Day?" binary="true"></p-checkbox>
         </div>
-        <div class="form-group">
-            <span class="ui-float-label">
-                <p-calendar id="startTime" [(ngModel)]="newEvent.startTime" [showIcon]="true"
-                            [timeOnly]="true" hourFormat="12" icon="pi pi-clock" [disabled]="newEvent.allDay"></p-calendar>
-                <label for="startTime">Event Time</label>
-            </span>
+        <div class="form-group" *ngIf="event.eventTypeId != 4">
+            <div class="row">
+                <div class="col-6">
+                    <span class="ui-float-label">
+                        <p-calendar id="startTime" [(ngModel)]="event.startTime" [showIcon]="true" (onClose)="updateDefault()"
+                                    [timeOnly]="true" hourFormat="12" icon="pi pi-clock" [disabled]="event.allDay"></p-calendar>
+                        <label for="startTime">Start Time</label>
+                    </span>
+                </div>
+                <div class="col-6" *ngIf="event.eventTypeId != 3">
+                    <span class="ui-float-label">
+                        <p-calendar id="endTime" [(ngModel)]="event.endTime" [showIcon]="true" [defaultDate]="defaultDate"
+                                    [timeOnly]="true" hourFormat="12" icon="pi pi-clock" [disabled]="event.allDay"></p-calendar>
+                        <label for="endTime">End Time <i>(Optional)</i></label>
+                    </span>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" *ngIf="event.eventTypeId != 4">
             <span class="ui-float-label">
-                <input id="eventLocation" class="form-control" type="text" size="50" pInputText [(ngModel)]="newEvent.location">
+                <input id="eventLocation" class="form-control" type="text" size="50" pInputText [(ngModel)]="event.location">
                 <label for="eventLocation">Location</label>
             </span>
         </div>
         <div class="form-group">
             <span class="ui-float-label">
-                <textarea class="form-control" id="descriptionTextArea" pInputTextarea rows="4" [(ngModel)]="newEvent.description"></textarea>
-                <label for="descriptionTextArea">Description</label>
+                <textarea class="form-control" id="descriptionTextArea" pInputTextarea rows="4" [(ngModel)]="event.description"></textarea>
+                <label for="descriptionTextArea">Description <i>(Optional)</i></label>
             </span>
         </div>
-        <div class="form-group">
-            <p-checkbox [(ngModel)]="newEvent.isRecurring" label="Is Recurring?" binary="true"></p-checkbox>
+        <div class="form-group" *ngIf="!event.isEditing">
+            <p-checkbox [(ngModel)]="event.isRecurring" label="Is Recurring?" binary="true"></p-checkbox>
         </div>
-        <div class="form-group" *ngIf="newEvent.isRecurring">
-            <p-selectButton [options]="recurrenceTypes" [(ngModel)]="newEvent.recurrenceType"></p-selectButton>
+        <div class="form-group" *ngIf="event.isRecurring && !event.isEditing">
+            <p-selectButton [options]="recurrenceTypes" [(ngModel)]="event.recurrenceType"></p-selectButton>
+        </div>
+        <div class="form-group" *ngIf="event.isRecurring && event.isEditing">
+            <p-checkbox [(ngModel)]="event.updateRecurrence" label="Update All Instances" binary="true"></p-checkbox>
+        </div>
+        <div class="form-group" *ngIf="event.recurrenceType === 'monthly' && !event.isEditing">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <p-radioButton name="group1" value="date" [(ngModel)]="event.recurrenceMonthlyType"></p-radioButton>
+                    <span style="margin-left: 5px">
+                        {{ getDayoftheMonth(event.start) }} of each month
+                    </span>
+                </div>
+                <div class="ui-g-12">
+                    <p-radioButton name="group1" value="week" [(ngModel)]="event.recurrenceMonthlyType"></p-radioButton>
+                    <span style="margin-left: 8px">
+                        <p-dropdown [options]="monthlyWeeks" [(ngModel)]="event.recurrenceMonthlyWeek" [style]="{'margin-right': '5px', 'line-height': '.8'}"></p-dropdown>
+                        {{ getDayoftheWeek(event.start) }} of each month
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="modalRef.hide(); createEvent()"><i class="fas fa-check"></i> Ok</button>
+        <button type="button" class="btn btn-primary" (click)="modalRef.hide(); saveEvent()"><i class="fas fa-check"></i> Ok</button>
         <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> Cancel</button>
+        <button *ngIf="event.isEditing" type="button" class="btn btn-danger" (click)="modalRef.hide(); deleteEvent()"><i class="fas fa-trash"></i> Delete</button>
     </div>
 </ng-template>
 

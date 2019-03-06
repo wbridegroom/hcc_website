@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
-import {SelectItem} from 'primeng/api';
+import { SelectItem } from 'primeng/api';
 
 import { CalendarContent } from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
@@ -12,6 +12,7 @@ import { Event } from '../../shared/models/calendar';
 import { PageComponent } from '../page/page.component';
 
 import 'fullcalendar';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-content-calendar',
@@ -27,11 +28,16 @@ export class ContentCalendarComponent implements OnInit {
     @ViewChild('addEventDialog') addEventDialog: ElementRef;
     modalRef: BsModalRef;
 
-    newEvent: any;
+    event: Event;
 
     calendar: any;
 
+    eventTypes: SelectItem[];
     recurrenceTypes: SelectItem[];
+    monthlyWeeks: SelectItem[];
+    daysOfTheWeek: SelectItem[];
+
+    defaultDate: Date;
 
     constructor(private authService: AuthService,
                 private pagesService: PagesService,
@@ -39,10 +45,37 @@ export class ContentCalendarComponent implements OnInit {
                 private modalService: BsModalService,
                 private http: HttpClient) {
 
+        this.defaultDate = new Date();
+        this.defaultDate.setHours(8);
+        this.defaultDate.setMinutes(0);
+
+        this.eventTypes = [
+            { label: 'Standard', value: 1 },
+            { label: 'Meeting', value: 2 },
+            { label: 'Mass', value: 3 },
+            { label: 'Holiday', value: 4}
+        ];
+
         this.recurrenceTypes = [
             { label: 'Annually', value: 'annually' },
             { label: 'Monthly', value: 'monthly' },
             { label: 'Weekly', value: 'weekly' }
+        ];
+        this.monthlyWeeks = [
+            { label: 'First', value: '1' },
+            { label: 'Second', value: '2' },
+            { label: 'Third', value: '3' },
+            { label: 'Fourth', value: '4' },
+            { label: 'Last', value: '5' }
+        ];
+        this.daysOfTheWeek = [
+            { label: 'Sunday', value: 'sunday' },
+            { label: 'Monday', value: 'monday' },
+            { label: 'Tuesday', value: 'tuesday' },
+            { label: 'Wednesday', value: 'wednesday' },
+            { label: 'Thursday', value: 'thursday' },
+            { label: 'Friday', value: 'friday' },
+            { label: 'Saturday', value: 'saturday' }
         ];
     }
 
@@ -50,8 +83,16 @@ export class ContentCalendarComponent implements OnInit {
         $('#calendar').fullCalendar({
             themeSystem: 'bootstrap4',
             events: (start, end, timezone, callback) => this.getEvents(start, end, callback),
-            eventRender: (event, element) => this.renderEvent(event, element)
+            eventRender: (event, element) => this.renderEvent(event, element),
+            eventClick: (event) => this.onClick(event)
         });
+    }
+
+    updateDefault() {
+        if (this.event) {
+            this.defaultDate.setHours(this.event.startTime.getHours());
+            this.defaultDate.setMinutes(this.event.startTime.getMinutes());
+        }
     }
 
     getEvents(start, end, success) {
@@ -67,57 +108,146 @@ export class ContentCalendarComponent implements OnInit {
     renderEvent(event, element) {
         element.popover({
             title: event.title,
-            content: event.description + '<br>' + event.location,
+            content: this.getTooltip(event),
             trigger: 'hover',
             placement: 'top',
             container: 'body',
             html: true
         });
     }
-    //
-    // onClick(calEvent, jsEvent, view) {
-    //     this.selectedEvent = calEvent;
-    //     this.showEventDialog = true;
-    // }
+
+    getTooltip(event) {
+        let tooltip = '<p style="width: 400px">';
+        tooltip += '<b>Date:</b> ' + event.start.format('MMMM Do YYYY');
+        if (!event.allDay) {
+            tooltip += '<br />';
+            tooltip += '<b>Time: </b> ' + event.start.format('h:mm a');
+            if (event.end != null) {
+                tooltip += ' - ' + event.end.format('h:mm a');
+            }
+        }
+        if (event.location) {
+            tooltip += '<br />';
+            tooltip += '<b>Location: </b> ' + event.location;
+        }
+        if (event.description) {
+            tooltip += '<br />';
+            tooltip += '<b>Description:</b><br />';
+            tooltip += event.description;
+        }
+        if (this.isAuthenticated()) {
+            tooltip += '<br /><br /><i style="color:darkred">(Click on event to edit)</i>';
+        }
+        tooltip += '</p>';
+        return tooltip;
+    }
+
+    onClick(calEvent) {
+        if (this.isAuthenticated()) {
+            this.editEvent(calEvent);
+        }
+    }
+
+    editEvent(calEvent) {
+        const startDate = new Date(
+            calEvent.start.year(),
+            calEvent.start.month(),
+            calEvent.start.date(),
+            calEvent.start.hours(),
+            calEvent.start.minutes(),
+            0
+        );
+        let endDate = null;
+        if (calEvent.end != null) {
+            endDate = new Date(
+                calEvent.end.year(),
+                calEvent.end.month(),
+                calEvent.end.date(),
+                calEvent.end.hours(),
+                calEvent.end.minutes(),
+                0
+            );
+        }
+
+        this.event = {
+            id: calEvent.id,
+            eventTypeId: calEvent.eventTypeId,
+            title: calEvent.title,
+            start: startDate,
+            startTime: startDate,
+            endTime: endDate,
+            description: calEvent.description,
+            location: calEvent.location,
+            allDay: calEvent.allDay,
+            isRecurring: calEvent.isRecurring,
+            recurrenceId: calEvent.recurrenceId,
+            updateRecurrence: false,
+            isEditing: true
+        } as Event;
+
+        this.showDialog(this.addEventDialog);
+    }
 
     addEvent() {
         const startTime = new Date();
         startTime.setHours(8);
         startTime.setMinutes(0);
-        this.newEvent = {
+        this.event = {
             title: null,
-            startDate: null,
+            start: null,
             startTime: startTime,
-            endDate: null,
+            end: null,
             endTime: null,
             description: null,
             location: null,
             allDay: false,
             isRecurring: false,
-            recurrenceType: 'annually'
-        };
+            recurrenceType: 'annually',
+            recurrenceMonthlyType: 'date',
+            recurrenceMonthlyWeek: 1,
+            eventTypeId: 1
+        } as Event;
         this.showDialog(this.addEventDialog);
     }
 
-    createEvent() {
-        const date = this.newEvent.startDate;
-        const time = this.newEvent.startTime;
-        const event = {
-            calendarId: 1,
-            title: this.newEvent.title,
-            description: this.newEvent.description,
-            location: this.newEvent.location,
-            startYear: date.getFullYear(),
-            startMonth: date.getMonth() + 1,
-            startDay: date.getDate(),
-            startHour: time.getHours(),
-            startMinute: time.getMinutes(),
-            end: null,
-            allDay: this.newEvent.allDay,
-            isRecurring: this.newEvent.isRecurring,
-            eventTypeId: 1
-        } as Event;
-        this.eventService.addEvent(event).subscribe(() => this.calendar.refetchEvents());
+    getDayoftheMonth(jsDate) {
+        if (jsDate) {
+            const date = moment(jsDate);
+            return date.format('Do');
+        }
+        return '';
+    }
+
+    getDayoftheWeek(jsDate) {
+        if (jsDate) {
+            const date = moment(jsDate);
+            return date.format('dddd');
+        }
+        return '';
+    }
+
+    saveEvent() {
+        const date = this.event.start;
+        const time = this.event.startTime;
+        this.event.startYear = date.getFullYear();
+        this.event.startMonth = date.getMonth() + 1;
+        this.event.startDay = date.getDate();
+        this.event.startHour = time.getHours();
+        this.event.startMinute = time.getMinutes();
+        if (this.event.endTime != null) {
+            this.event.hasEndTime = true;
+            this.event.endHour = this.event.endTime.getHours();
+            this.event.endMinute = this.event.endTime.getMinutes();
+        }
+        this.eventService.saveEvent(this.event).subscribe(
+            () => $('#calendar').fullCalendar('refetchEvents')
+        );
+    }
+
+    deleteEvent() {
+        this.eventService.deleteEvent(this.event).subscribe(
+            () => $('#calendar').fullCalendar('refetchEvents')
+        );
     }
 
     isAuthenticated(): boolean {

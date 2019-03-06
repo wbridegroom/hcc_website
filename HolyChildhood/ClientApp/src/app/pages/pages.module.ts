@@ -13,6 +13,7 @@ import { MessageService} from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/primeng';
 import { CheckboxModule } from 'primeng/primeng';
+import { RadioButtonModule } from 'primeng/primeng';
 import { DropdownModule } from 'primeng/dropdown';
 import { SelectButtonModule } from 'primeng/primeng';
 import { ToastModule } from 'primeng/toast';
@@ -54,6 +55,7 @@ import 'jquery';
         CheckboxModule,
         DropdownModule,
         SelectButtonModule,
+        RadioButtonModule,
         ToastModule,
         NgbModule,
         PdfViewerModule,
