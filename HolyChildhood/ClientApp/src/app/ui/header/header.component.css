@@ -14,3 +14,10 @@
     color: white;
     margin-top: -3px;
 }
+
+.logo {
+    height: 65px;
+    width: 65px;
+    background:url('../../../assets/images/church_round.png') no-repeat;
+    background-size: 65px 65px;
+}
