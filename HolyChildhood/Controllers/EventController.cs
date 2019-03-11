@@ -46,6 +46,39 @@ namespace HolyChildhood.Controllers
             return @event;
         }
 
+        [HttpGet("upcoming/{count}")]
+        public async Task<ActionResult<List<EventViewModel>>> GetUpcomingEvents(int count)
+        {
+            var events = await dbContext.Events
+                .Include(e => e.EventType)
+                .Where(e => e.BeginDate > DateTime.Now)
+                .OrderBy(e => e.BeginDate)
+                .Take(count).ToListAsync();
+
+            var viewEvents = new List<EventViewModel>();
+            foreach (var @event in events)
+            {
+                viewEvents.Add(new EventViewModel
+                {
+                    Id = @event.Id,
+                    Title = @event.Title,
+                    Start = @event.BeginDate,
+                    End = @event.EndDate,
+                    Description = @event.Description,
+                    Notes = @event.Notes,
+                    Location = @event.Location,
+                    AllDay = @event.AllDay,
+                    EventTypeId = @event.EventType.Id,
+                    EventTypeName = @event.EventType.Name,
+                    Color = @event.EventType.Color,
+                    IsRecurring = @event.IsRecurring,
+                    RecurrenceId = @event.RecurrenceId
+                });
+            }
+
+            return viewEvents;
+        }
+
         [HttpGet("{start}/{end}")]
         public async Task<ActionResult<List<EventViewModel>>> GetEvents(DateTime start, DateTime end)
         {

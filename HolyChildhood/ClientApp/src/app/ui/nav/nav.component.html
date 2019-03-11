@@ -104,11 +104,11 @@
                     <i class="far fa-user"></i> {{ getFullName() }}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" routerLink="/profile"><i class="fas fa-user-cog"></i> User Profile</a>
-                    <a class="dropdown-item" routerLinkActive="active" routerLink="/settings">
+                    <a class="dropdown-item" routerLinkActive="active" routerLink="/profile"><i class="fas fa-user-cog"></i> User Profile</a>
+                    <a *ngIf="authService.isAdministrator()" class="dropdown-item" routerLinkActive="active" routerLink="/settings">
                         <i class="fas fa-cogs"></i> Settings
                     </a>
-                    <div class="dropdown-item" (click)="$event.stopPropagation()">
+                    <div *ngIf="authService.isAdministrator() || authService.isEditor()" class="dropdown-item" (click)="$event.stopPropagation()">
                         <div class="ui-grid-row">
                             <div class="ui-grid-col-6">
                                 <p-inputSwitch [(ngModel)]="editModeOn" (onChange)="toggleEditMode()"></p-inputSwitch>

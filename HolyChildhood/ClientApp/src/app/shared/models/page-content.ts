@@ -43,6 +43,7 @@ export interface CalendarContent {
 
 export interface FileContent {
     id: number;
+    title: string;
     fileType: string;
     files: Pdf[];
 }

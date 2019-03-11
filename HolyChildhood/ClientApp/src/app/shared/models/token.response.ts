@@ -3,4 +3,5 @@ interface TokenResponse {
     expiration: number;
     userName: string;
     fullName: string;
+    roles: string[];
 }

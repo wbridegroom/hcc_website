@@ -22,6 +22,11 @@ export class EventService {
         return this.httpClient.get<Event[]>('/api/event');
     }
 
+    public getUpcomingEvents(count: number): Observable<Event[]> {
+        const url = `/api/event/upcoming/${count}`;
+        return this.httpClient.get<Event[]>(url);
+    }
+
     public saveEvent(event: Event) {
         const options = {
             headers: new HttpHeaders({

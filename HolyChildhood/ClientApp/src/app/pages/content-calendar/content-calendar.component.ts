@@ -13,6 +13,7 @@ import { PageComponent } from '../page/page.component';
 
 import 'fullcalendar';
 import * as moment from 'moment';
+import {Confirm} from '../../shared/models/confirm';
 
 @Component({
     selector: 'app-content-calendar',
@@ -25,8 +26,10 @@ export class ContentCalendarComponent implements OnInit {
     @Input() pageContentId: number;
     @Input() calendarContent: CalendarContent;
 
+    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
     @ViewChild('addEventDialog') addEventDialog: ElementRef;
     modalRef: BsModalRef;
+    confirmModel: Confirm;
 
     event: Event;
 
@@ -259,10 +262,16 @@ export class ContentCalendarComponent implements OnInit {
     }
 
     deleteContent() {
-        const id = this.pageContentId;
-        this.pagesService.deletePageContent(id).subscribe(() => {
-            this.pageComponent.loadPage();
-        });
+        this.confirmModel = {
+            title: 'Delete Content?',
+            message: `Are you sure you want to delete this content? It cannot be undone.`,
+            onOk: () => {
+                this.pagesService.deletePageContent(this.pageContentId).subscribe(() => {
+                    this.pageComponent.loadPage();
+                });
+            }
+        } as Confirm;
+        this.showDialog(this.confirmDialog);
     }
 
 }

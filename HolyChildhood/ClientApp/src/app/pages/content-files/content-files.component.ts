@@ -11,6 +11,7 @@ import { PagesService } from '../pages.service';
 import { PageComponent } from '../page/page.component';
 
 import * as moment from 'moment';
+import {View} from 'fullcalendar/src/exports';
 
 @Component({
   selector: 'app-content-files',
@@ -23,14 +24,15 @@ export class ContentFilesComponent implements OnInit {
     @Input() pageContentId: number;
     @Input() fileContent: FileContent;
 
-    @ViewChild('uploadDialog') uploadDialog: ElementRef;
+    @ViewChild('uploadPdfDialog') uploadPdfDialog: ElementRef;
+    @ViewChild('uploadBulletinDialog') uploadBulletinDialog: ElementRef;
     @ViewChild('confirmationDialog') confirmDialog: ElementRef;
     modalRef: BsModalRef;
     confirmModel: Confirm;
 
     public currentPdf: String;
-    bulletins: Pdf[];
-    selectedBulletin: Pdf;
+    pdfs: Pdf[];
+    selectedPdf: Pdf;
 
     uploadFileLabel = 'Choose File...';
     uploadFiles: File[];
@@ -43,22 +45,22 @@ export class ContentFilesComponent implements OnInit {
                 private http: HttpClient) { }
 
     ngOnInit() {
-        this.loadBulletins();
+        this.loadPdfs();
     }
 
-    loadBulletins() {
-        this.http.get<Pdf[]>('/api/file').subscribe(bulletins => {
-            this.bulletins = bulletins;
-            if (bulletins.length > 0) {
-                this.bulletins[0].title = 'Current Week';
-                this.selectedBulletin = this.bulletins[0];
-                this.currentPdf = `/files/${this.selectedBulletin.id}.pdf`;
+    loadPdfs() {
+        const url = `/api/file/${this.fileContent.id}`;
+        this.http.get<Pdf[]>(url).subscribe(pdfs => {
+            this.pdfs = pdfs;
+            if (pdfs.length > 0) {
+                this.selectedPdf = this.pdfs[0];
+                this.currentPdf = `/files/${this.selectedPdf.id}.pdf`;
             }
         });
     }
 
     loadBulletin() {
-        this.currentPdf = `/files/${this.selectedBulletin.id}.pdf`;
+        this.currentPdf = `/files/${this.selectedPdf.id}.pdf`;
     }
 
     showDialog(dialog) {
@@ -77,7 +79,11 @@ export class ContentFilesComponent implements OnInit {
         this.uploadFileName = '';
         this.uploadCreationDate = null;
         this.uploadFileLabel = 'Choose file...';
-        this.showDialog(this.uploadDialog);
+        if (this.fileContent.fileType === 'bulletin') {
+            this.showDialog(this.uploadBulletinDialog);
+        } else {
+            this.showDialog(this.uploadPdfDialog);
+        }
     }
 
     fileSelectionChanged(uploadFiles: File[]) {
@@ -86,16 +92,20 @@ export class ContentFilesComponent implements OnInit {
     }
 
     uploadFile() {
-        const uploadDate = moment(this.uploadCreationDate);
-        this.uploadFileName = uploadDate.format('MMMM D, YYYY');
+        if (this.fileContent.fileType === 'bulletin') {
+            const uploadDate = moment(this.uploadCreationDate);
+            this.uploadFileName = uploadDate.format('MMMM D, YYYY');
+        } else {
+            this.uploadCreationDate = new Date();
+        }
 
         const formData = new FormData();
         Array.from(this.uploadFiles).forEach(f => formData.append('files', f));
         formData.append('name', this.uploadFileName);
-        formData.append('date', this.uploadCreationDate.toLocaleDateString());
+        formData.append('date', this.uploadCreationDate.toISOString());
         formData.append('fileContentId', this.fileContent.id.toString());
         this.http.post('/api/File', formData).subscribe(() => {
-            this.loadBulletins();
+            this.loadPdfs();
         });
     }
 
@@ -106,11 +116,11 @@ export class ContentFilesComponent implements OnInit {
     deleteFile() {
         this.confirmModel = {
             title: 'Delete PDF?',
-            message: `Are you sure you want to delete the ${this.selectedBulletin.title} PDF?`,
+            message: `Are you sure you want to delete the ${this.selectedPdf.title} PDF?`,
             onOk: () => {
-                const url = `/api/File/${this.selectedBulletin.id}`;
+                const url = `/api/File/${this.selectedPdf.id}`;
                 this.http.delete(url).subscribe(() => {
-                    this.loadBulletins();
+                    this.loadPdfs();
                 });
             }
         } as Confirm;

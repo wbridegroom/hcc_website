@@ -35,7 +35,6 @@ export class PageComponent implements OnInit {
     pdfTypes: SelectItem[] = [
         {label: 'Select PDF Type', value: null},
         {label: 'Bulletin', value: 'bulletin'},
-        {label: 'Schedule', value: 'schedule'},
         {label: 'Other', value: 'other'}
     ];
 

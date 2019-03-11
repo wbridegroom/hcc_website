@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,6 +56,8 @@ namespace HolyChildhood.Controllers
                     return new UnauthorizedResult();
                 }
 
+                var roles = await userManager.GetRolesAsync(user);
+
                 var now = DateTime.UtcNow;
                 var claims = new[]
                 {
@@ -79,7 +82,8 @@ namespace HolyChildhood.Controllers
                     Token = encodedToken,
                     Expiration = tokenExpirationMins,
                     UserName = user.UserName,
-                    FullName = $"{user.FirstName} {user.LastName}"
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    Roles = roles.ToArray<string>()
                 };
                 return response;
             }

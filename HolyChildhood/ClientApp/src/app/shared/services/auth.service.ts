@@ -2,6 +2,7 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthService {
@@ -10,7 +11,7 @@ export class AuthService {
     editKey = 'edit';
     clientId = 'hcweb';
 
-    constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: any) { }
+    constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: any, private router: Router) { }
 
     login(username: string, password: string): Observable<any> {
         const url = 'api/token/auth';
@@ -26,7 +27,10 @@ export class AuthService {
 
     logout(): boolean {
         this.setAuth(null);
-        return true;
+        this.router.navigateByUrl('/home').then(() => {
+            return true;
+        });
+        return false;
     }
 
     isLoggedIn(): boolean {
@@ -54,6 +58,19 @@ export class AuthService {
             }
         }
         return true;
+    }
+
+    isInRole(role: string): boolean {
+        const auth = this.getAuth();
+        return auth.roles.indexOf(role) >= 0;
+    }
+
+    isAdministrator(): boolean {
+        return this.isInRole('Administrator');
+    }
+
+    isEditor(): boolean {
+        return this.isInRole('Editor');
     }
 
     setEdit(editOn: boolean) {

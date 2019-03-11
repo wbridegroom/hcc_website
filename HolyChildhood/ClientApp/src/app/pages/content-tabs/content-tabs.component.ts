@@ -44,10 +44,16 @@ export class ContentTabsComponent {
     }
 
     deleteContent() {
-        const id = this.pageContentId;
-        this.pagesService.deletePageContent(id).subscribe(() => {
-            this.pageComponent.loadPage();
-        });
+        this.confirmModel = {
+            title: 'Delete Content?',
+            message: `Are you sure you want to delete this content? It cannot be undone.`,
+            onOk: () => {
+                this.pagesService.deletePageContent(this.pageContentId).subscribe(() => {
+                    this.pageComponent.loadPage();
+                });
+            }
+        } as Confirm;
+        this.showDialog(this.confirmDialog);
     }
 
     beforeTabChange($event: NgbTabChangeEvent) {

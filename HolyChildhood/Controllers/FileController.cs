@@ -34,17 +34,18 @@ namespace HolyChildhood.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult> GetFile(int id)
+        public async Task<ActionResult<IEnumerable<File>>> GetFilesByContentId(int id)
         {
-            var dbFile = await dbContext.Files.FindAsync(id);
-            if (dbFile == null) return NotFound();
+            return await dbContext.Files.Where(f => f.FileContentId == id).OrderByDescending(f => f.CreatedAt).ToListAsync();
+            //var dbFile = await dbContext.Files.FindAsync(id);
+            //if (dbFile == null) return NotFound();
 
-            var path = "wwwroot/files/" + dbFile.Id + "." + dbFile.Type;
-            if (!System.IO.File.Exists(path)) return NotFound();
+            //var path = "wwwroot/files/" + dbFile.Id + "." + dbFile.Type;
+            //if (!System.IO.File.Exists(path)) return NotFound();
 
-            var file = System.IO.File.OpenRead(path);
+            //var file = System.IO.File.OpenRead(path);
 
-            return File(file, "application/pdf");
+            //return File(file, "application/pdf");
         }
 
         // POST: api/File

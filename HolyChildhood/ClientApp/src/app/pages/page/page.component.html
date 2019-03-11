@@ -46,7 +46,17 @@
             </button>
         </div>
         <div class="modal-body">
-            <p-dropdown [options]="pdfTypes" [(ngModel)]="content.fileContent.fileType"></p-dropdown>
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <span class="ui-float-label">
+                        <input id="fileTypeTitle" type="text" size="30" pInputText [(ngModel)]="content.fileContent.title">
+                        <label for="fileTypeTitle">Title</label>
+                    </span>
+                </div>
+                <div class="ui-g-12">
+                    <p-dropdown [options]="pdfTypes" [(ngModel)]="content.fileContent.fileType"></p-dropdown>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" (click)="modalRef.hide(); addContent()"><i class="fas fa-check"></i> Ok</button>
@@ -62,7 +72,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <i class="fas fa-question"></i> {{ confirmModel.message }}
+            {{ confirmModel.message }}
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" (click)="modalRef.hide(); confirmModel.onOk()"><i class="fas fa-check"></i> Yes</button>

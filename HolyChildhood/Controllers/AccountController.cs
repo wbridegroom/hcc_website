@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HolyChildhood.Models;
@@ -6,6 +7,7 @@ using HolyChildhood.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HolyChildhood.Controllers
 {
@@ -15,10 +17,58 @@ namespace HolyChildhood.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
+        private readonly AppDbContext dbContext;
 
-        public AccountController(UserManager<AppUser> userManager)
+        public AccountController(UserManager<AppUser> userManager, AppDbContext dbContext)
         {
             this.userManager = userManager;
+            this.dbContext = dbContext;
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<UserViewModel>>> GetUsers()
+        {
+            var users = await dbContext.Users.ToListAsync();
+            var userList = new List<UserViewModel>();
+            foreach (var user in users)
+            {
+                var appUser = await userManager.FindByNameAsync(user.UserName);
+                var roles = await userManager.GetRolesAsync(appUser);
+                userList.Add(new UserViewModel
+                {
+                    Title = user.Title,
+                    FirstName = user.FirstName,
+                    MiddleInitial = user.MiddleInitial,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    PhoneNumber = user.PhoneNumber,
+                    Roles = roles.ToArray<string>()
+                });
+            }
+
+            return userList;
+        }
+
+        [HttpGet("{username}")]
+        [Authorize]
+        public async Task<ActionResult<UserViewModel>> GetUser(string username)
+        {
+            var appUser = await userManager.FindByNameAsync(username);
+            var roles = await userManager.GetRolesAsync(appUser);
+            var user = new UserViewModel
+            {
+                Title = appUser.Title,
+                FirstName = appUser.FirstName,
+                MiddleInitial = appUser.MiddleInitial,
+                LastName = appUser.LastName,
+                Email = appUser.Email,
+                UserName = appUser.UserName,
+                PhoneNumber = appUser.PhoneNumber,
+                Roles = roles.ToArray<string>()
+            };
+            return user;
         }
 
         [HttpPost]
@@ -33,10 +83,15 @@ namespace HolyChildhood.Controllers
                 LastName = user.LastName,
                 Email = user.Email
             };
-            await userManager.CreateAsync(appUser, user.Password);
-            foreach (var role in user.Roles)
+            var createUser = userManager.CreateAsync(appUser, user.Password);
+            createUser.Wait();
+
+            if (createUser.Result.Succeeded)
             {
-                await userManager.AddToRoleAsync(appUser, role);
+                foreach (var role in user.Roles)
+                {
+                    await userManager.AddToRoleAsync(appUser, role);
+                }
             }
 
             return NoContent();
@@ -72,14 +127,14 @@ namespace HolyChildhood.Controllers
                     {
                         if (!await userManager.IsInRoleAsync(appUser, role))
                         {
-                            userManager.AddToRoleAsync(appUser, role);
+                            await userManager.AddToRoleAsync(appUser, role);
                         }
                     }
                     else
                     {
                         if (await userManager.IsInRoleAsync(appUser, role))
                         {
-                            userManager.RemoveFromRoleAsync(appUser, role);
+                            await userManager.RemoveFromRoleAsync(appUser, role);
                         }
                     }
                 }

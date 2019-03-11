@@ -23,66 +23,59 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-lg-8">
             <h2>Weekly Schedule</h2>
 
             <div [ngClass]="{'edit': isEditOn()}">
                 <app-content-text [textContent]="weeklySchedule"></app-content-text>
             </div>
-            <!--<div class="row">-->
-                <!--<div class="col"><b>Saturday</b></div>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col">Reconciliation</div>-->
-                <!--<div class="col">4:00 P.M.</div>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col">Mass</div>-->
-                <!--<div class="col">5:00 P.M.</div>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col"><b>Sunday</b></div>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col">Mass</div>-->
-                <!--<div class="col">8:00 A.M.</div>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col"></div>-->
-                <!--<div class="col">10:30 A.M.</div>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col"><b>Tue, Thurs, Fri</b></div>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col">Daily Mass</div>-->
-                <!--<div class="col">8:00 A.M.</div>-->
-            <!--</div>-->
-
         </div>
-        <div class="col-md-4">
+        <div class="col-lg-4">
             <h2>Upcoming Events</h2>
-            <!--<div class="row" *ngFor="let event of eventService.events">-->
-                <!--<div class="col-lg-3">-->
-                    <!--<div class="card" style="width: 75px; padding: 0; margin-bottom: 5px; border-color: #1f3e65">-->
-                        <!--<div class="card-header text-center" style="font-weight: bold; padding: 0; background-color: #1f3e65; color: white">-->
-                            <!--{{ event.start | date:'MMM'}}-->
-                        <!--</div>-->
-                        <!--<div class="card-body text-center" style="font-weight: bold; padding: 0;">-->
-                            <!--{{ event.start | date:'d'}}-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="col-lg-9">-->
-                    <!--<div style="font-weight: bold">{{ event.title }}</div>-->
-                    <!--{{ event.start | date: 'shortTime'}}-->
-                <!--</div>-->
-            <!--</div>-->
+            <ng-template #eventTemplate let-event="event">
+                <div style="width: 400px">
+                    <b>Date:</b> {{ getDate(event.start) }}
+                    <div *ngIf="!event.allDay">
+                        <b>Time:</b>
+                        {{ getTime(event.start) }}
+                        <span *ngIf="event.end">
+                            -&nbsp;{{ getTime(event.end) }}
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="event.location">
+                    <b>Location: </b> {{ event.location }}
+                </div>
+                <div *ngIf="event.description">
+                    <b>Description: </b> {{ event.description }}
+                </div>
+            </ng-template>
+            <div class="row" *ngFor="let event of upcomingEvents" [popoverTitle]="event.title"
+                    [popover]="eventTemplate" [popoverContext]="{event: event}"
+                    triggers="mouseenter:mouseleave">
+                <div class="col-3">
+                    <div class="card" style="width: 65px; padding: 0; margin-bottom: 5px; border-color: #1f3e65">
+                        <div class="card-header text-center" style="font-weight: bold; padding: 0; background-color: #1f3e65; color: white;">
+                            {{ event.start | date:'MMM'}}
+                        </div>
+                        <div class="card-body text-center" style="font-weight: bold; padding: 0;">
+                            {{ event.start | date:'d'}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-9">
+                    <div style="font-weight: bold">{{ event.title }}</div>
+                    {{ event.start | date: 'shortTime'}}
+                    <span *ngIf="event.end">
+                       -&nbsp;{{ event.end | date: 'shortTime' }}
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     <br/>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-lg-8">
             <h2>Contact Information</h2>
             <div [ngClass]="{'edit': isEditOn()}">
                 <app-content-text [textContent]="contactInfo"></app-content-text>
@@ -137,7 +130,7 @@
                 <!--</div>-->
             <!--</div>-->
         </div>
-        <div class="col-md-4">
+        <div class="col-lg-4">
             <a href="http://churchcampaign.org/holychild" target="_blank">
                 <img src="assets/images/Past2Future.jpg" style="width: 250px">
             </a>

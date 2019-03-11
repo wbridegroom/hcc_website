@@ -3,6 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { TextContent} from '../shared/models/page-content';
 import { PagesService } from '../pages/pages.service';
 import { AuthService } from '../shared/services/auth.service';
+import { EventService } from '../shared/services/event.service';
+import { Event } from '../shared/models/calendar';
+
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-home',
@@ -14,13 +18,15 @@ export class HomeComponent implements OnInit {
     main: TextContent;
     weeklySchedule: TextContent;
     contactInfo: TextContent;
+    upcomingEvents: Event[];
 
-    constructor(private authService: AuthService, private pagesService: PagesService) {}
+    constructor(private authService: AuthService, private pagesService: PagesService, private eventService: EventService) {}
 
     ngOnInit(): void {
         this.getMainText();
         this.getWeeklyScheduleText();
         this.getContactInformationText();
+        this.getUpcomingEvents();
     }
 
     isAuthenticated(): boolean {
@@ -47,6 +53,22 @@ export class HomeComponent implements OnInit {
         this.pagesService.getTextContent(3).subscribe((data: TextContent) => {
             this.contactInfo = data;
         });
+    }
+
+    getUpcomingEvents(): void {
+        this.eventService.getUpcomingEvents(8).subscribe(events => {
+            this.upcomingEvents = events;
+        });
+    }
+
+    getDate(dateStr) {
+        const date = moment(dateStr);
+        return date.format('MMMM Do YYYY');
+    }
+
+    getTime(dateStr) {
+        const date = moment(dateStr);
+        return date.format('hh:mm a');
     }
 }
 

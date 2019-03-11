@@ -8,7 +8,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <i class="fas fa-question"></i> {{ confirmModel.message }}
+            {{ confirmModel.message }}
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" (click)="modalRef.hide(); confirmModel.onOk()"><i class="fas fa-check"></i> Yes</button>

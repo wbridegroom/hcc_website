@@ -34,6 +34,7 @@ namespace HolyChildhood.Models
     public class FileContent
     {
         public int Id { get; set; }
+        public string Title { get; set; }
         public string FileType { get; set; }
         public List<File> Files { get; set; }
     }

@@ -1,0 +1,20 @@
+.hcc-table-header {
+    border-style: none !important;
+    background-color: dimgray !important;
+    color: white !important;
+}
+
+.hcc-table-cell {
+    border-style: none !important;
+}
+
+.hcc-table {
+    table-layout: auto !important;
+}
+
+.invalid {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
