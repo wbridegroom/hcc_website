@@ -4,7 +4,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 import { Confirm } from '../../shared/models/confirm';
-import { Tab, TabContent, TextContent } from '../../shared/models/page-content';
+import { PageContent, Tab, TabContent, TextContent } from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { PageComponent } from '../page/page.component';
@@ -17,8 +17,8 @@ import { PageComponent } from '../page/page.component';
 export class ContentTabsComponent {
 
     @Input() pageComponent: PageComponent;
-    @Input() pageContentId: number;
     @Input() tabContent: TabContent;
+    @Input() pageContent: PageContent;
 
     @ViewChild('confirmationDialog') confirmDialog: ElementRef;
     @ViewChild('tabDialog') tabDialog: ElementRef;
@@ -41,19 +41,6 @@ export class ContentTabsComponent {
 
     isEditOn(): boolean {
         return this.isAuthenticated() && this.authService.isEdit();
-    }
-
-    deleteContent() {
-        this.confirmModel = {
-            title: 'Delete Content?',
-            message: `Are you sure you want to delete this content? It cannot be undone.`,
-            onOk: () => {
-                this.pagesService.deletePageContent(this.pageContentId).subscribe(() => {
-                    this.pageComponent.loadPage();
-                });
-            }
-        } as Confirm;
-        this.showDialog(this.confirmDialog);
     }
 
     beforeTabChange($event: NgbTabChangeEvent) {

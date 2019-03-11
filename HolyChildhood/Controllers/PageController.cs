@@ -32,16 +32,20 @@ namespace HolyChildhood.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Page>> GetPage(int id)
         {
-            var page = await dbContext.Pages.Include(p => p.Parent).ThenInclude(p => p.MenuItem)
+            var page = dbContext.Pages
+                .Include(p => p.Parent).ThenInclude(p => p.MenuItem)
                 .Include(p => p.MenuItem) 
                 .Include(p => p.Children)
                 .Include(p => p.PageContents).ThenInclude(pc => pc.TextContent)
                 .Include(p => p.PageContents).ThenInclude(pc => pc.TabContent).ThenInclude(tc => tc.Tabs).ThenInclude(t => t.TextContent)
                 .Include(p => p.PageContents).ThenInclude(pc => pc.CalendarContent).ThenInclude(cc => cc.Calendar).ThenInclude(c => c.Events)
                 .Include(p => p.PageContents).ThenInclude(pc => pc.FileContent).ThenInclude(fc => fc.Files)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefault(p => p.Id == id);
 
             if (page == null) return NotFound();
+
+            page.Children = page.Children?.OrderBy(c => c.Index).ToList();
+            page.PageContents = page.PageContents?.OrderBy(pc => pc.Index).ToList();
 
             return page;
         }

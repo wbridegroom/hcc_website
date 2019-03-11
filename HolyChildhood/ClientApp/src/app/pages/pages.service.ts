@@ -43,9 +43,14 @@ export class PagesService {
         return this.http.post(url, content, http_options);
     }
 
-    public updatePageContent(pageContent: PageContent) {
-        const url = `/api/pagecontent/${pageContent.id}`;
-        return this.http.put(url, pageContent, http_options);
+    public moveContentUp(id) {
+        const url = `/api/pagecontent/moveup/${id}`;
+        return this.http.post(url, {}, http_options);
+    }
+
+    public moveContentDown(id) {
+        const url = `/api/pagecontent/movedown/${id}`;
+        return this.http.post(url, {}, http_options);
     }
 
     public getTextContent(id: number | string): Observable<TextContent> {

@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputSwitchModule } from 'primeng/primeng';
+import { OrderListModule } from 'primeng/orderlist';
 import { ModalModule } from 'ngx-bootstrap';
 
 import { LayoutComponent } from './layout/layout.component';
@@ -27,6 +28,7 @@ import { LoginComponent } from './login/login.component';
         ReactiveFormsModule,
         InputTextModule,
         InputSwitchModule,
+        OrderListModule,
         ModalModule.forRoot()
     ],
     exports: [LayoutComponent]

@@ -132,16 +132,16 @@
         <div [ngClass]="{'col-md-9': page.children.length > 0, 'col-md-12': page.children.length == 0}">
             <div class="content" [ngClass]="{'edit': isEditOn()}" *ngFor="let pageContent of page.pageContents">
                 <div *ngIf="pageContent.contentType === 'Text'">
-                    <app-content-text [pageContentId]="pageContent.id" [textContent]="pageContent.textContent" [pageComponent]="this"></app-content-text>
+                    <app-content-text [pageContent]="pageContent" [textContent]="pageContent.textContent" [pageComponent]="this"></app-content-text>
                 </div>
                 <div *ngIf="pageContent.contentType === 'Calendar'">
-                    <app-content-calendar [pageContentId]='pageContent.id' [calendarContent]="pageContent.calendarContent" [pageComponent]="this"></app-content-calendar>
+                    <app-content-calendar [pageContent]='pageContent' [calendarContent]="pageContent.calendarContent" [pageComponent]="this"></app-content-calendar>
                 </div>
                 <div *ngIf="pageContent.contentType === 'Tabs'">
-                    <app-content-tabs [pageContentId]='pageContent.id' [tabContent]="pageContent.tabContent" [pageComponent]="this"></app-content-tabs>
+                    <app-content-tabs [pageContent]='pageContent' [tabContent]="pageContent.tabContent" [pageComponent]="this"></app-content-tabs>
                 </div>
                 <div *ngIf="pageContent.contentType === 'Files'">
-                    <app-content-files [pageContentId]='pageContent.id' [fileContent]="pageContent.fileContent" [pageComponent]="this"></app-content-files>
+                    <app-content-files [pageContent]='pageContent' [fileContent]="pageContent.fileContent" [pageComponent]="this"></app-content-files>
                 </div>
             </div>
         </div>

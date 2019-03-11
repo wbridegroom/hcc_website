@@ -24,7 +24,9 @@ namespace HolyChildhood.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MenuItem>>> GetMenuItems()
         {
-            return await dbContext.MenuItems.Include(m => m.Pages).ToListAsync();
+            var menuItems = dbContext.MenuItems.Include(m => m.Pages).ToList();
+            menuItems.ForEach(m => m.Pages = m.Pages.OrderBy(p => p.Index).ToList());
+            return menuItems;
         }
 
         // GET: api/Menu/5
@@ -51,6 +53,10 @@ namespace HolyChildhood.Controllers
             if (id != menuItem.Id) return BadRequest();
 
             dbContext.Entry(menuItem).State = EntityState.Modified;
+            foreach(var page in menuItem.Pages)
+            {
+                dbContext.Entry(page).State = EntityState.Modified;
+            }
 
             try
             {

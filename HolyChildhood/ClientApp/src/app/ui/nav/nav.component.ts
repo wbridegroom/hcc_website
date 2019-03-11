@@ -84,12 +84,16 @@ export class NavComponent implements OnInit {
         this.page = {} as Page;
         if (menuItem) {
             this.page.menuItemId = menuItem.id;
+            this.page.index = menuItem.pages.length;
         }
         this.showDialog(this.pageDialog);
     }
 
     addMenu(): void {
         if (this.menu.id) {
+            for (let i = 0; i < this.menu.pages.length; i++) {
+                this.menu.pages[i].index = i;
+            }
             this.navService.saveMenu(this.menu);
         } else {
             this.navService.addMenu(this.menu);

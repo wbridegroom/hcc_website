@@ -27,10 +27,22 @@
             </button>
         </div>
         <div class="modal-body">
-            <span class="ui-float-label" style="margin: 15px">
-                <input id="menuName" type="text" size="30" pInputText [(ngModel)]="menu.name">
-                <label for="menuName">Menu Name</label>
-            </span>
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <span class="ui-float-label" style="margin: 15px">
+                        <input id="menuName" type="text" size="30" pInputText [(ngModel)]="menu.name">
+                        <label for="menuName">Menu Name</label>
+                    </span>
+                </div>
+                <div *ngIf="menu.pages.length > 1" class="ui-g-12">
+                    <p-orderList [value]="menu.pages">
+                        <ng-template let-page pTemplate="item">
+                            {{ page.title }}
+                        </ng-template>
+                    </p-orderList>
+                </div>
+            </div>
+
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" (click)="modalRef.hide(); addMenu()"><i class="fas fa-check"></i> Ok</button>

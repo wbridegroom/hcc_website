@@ -6,6 +6,7 @@ namespace HolyChildhood.Models
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public int Index { get; set; }
         public int? MenuItemId { get; set; }
         public MenuItem MenuItem { get; set; }
         public List<PageContent> PageContents { get; set; }

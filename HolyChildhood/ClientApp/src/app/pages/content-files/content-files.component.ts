@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
-import { FileContent } from '../../shared/models/page-content';
+import { FileContent, PageContent } from '../../shared/models/page-content';
 import { Pdf } from '../../shared/models/file';
 import { Confirm } from '../../shared/models/confirm';
 import { AuthService } from '../../shared/services/auth.service';
@@ -11,7 +11,6 @@ import { PagesService } from '../pages.service';
 import { PageComponent } from '../page/page.component';
 
 import * as moment from 'moment';
-import {View} from 'fullcalendar/src/exports';
 
 @Component({
   selector: 'app-content-files',
@@ -21,7 +20,7 @@ import {View} from 'fullcalendar/src/exports';
 export class ContentFilesComponent implements OnInit {
 
     @Input() pageComponent: PageComponent;
-    @Input() pageContentId: number;
+    @Input() pageContent: PageContent;
     @Input() fileContent: FileContent;
 
     @ViewChild('uploadPdfDialog') uploadPdfDialog: ElementRef;
@@ -126,18 +125,4 @@ export class ContentFilesComponent implements OnInit {
         } as Confirm;
         this.showDialog(this.confirmDialog);
     }
-
-    deleteContent() {
-        this.confirmModel = {
-            title: 'Delete File Content?',
-            message: `Are you sure you want to delete this file content? It cannot be undone.`,
-            onOk: () => {
-                this.pagesService.deletePageContent(this.pageContentId).subscribe(() => {
-                    this.pageComponent.loadPage();
-                });
-            }
-        } as Confirm;
-        this.showDialog(this.confirmDialog);
-    }
-
 }

@@ -4,16 +4,16 @@ import { HttpClient } from '@angular/common/http';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { SelectItem } from 'primeng/api';
 
-import { CalendarContent } from '../../shared/models/page-content';
+import { CalendarContent, PageContent } from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { EventService } from '../../shared/services/event.service';
-import { Event } from '../../shared/models/calendar';
 import { PageComponent } from '../page/page.component';
 
 import 'fullcalendar';
 import * as moment from 'moment';
-import {Confirm} from '../../shared/models/confirm';
+import { Confirm } from '../../shared/models/confirm';
+import { Event } from '../../shared/models/calendar';
 
 @Component({
     selector: 'app-content-calendar',
@@ -23,7 +23,7 @@ import {Confirm} from '../../shared/models/confirm';
 export class ContentCalendarComponent implements OnInit {
 
     @Input() pageComponent: PageComponent;
-    @Input() pageContentId: number;
+    @Input() pageContent: PageContent;
     @Input() calendarContent: CalendarContent;
 
     @ViewChild('confirmationDialog') confirmDialog: ElementRef;
@@ -32,8 +32,6 @@ export class ContentCalendarComponent implements OnInit {
     confirmModel: Confirm;
 
     event: Event;
-
-    calendar: any;
 
     eventTypes: SelectItem[];
     recurrenceTypes: SelectItem[];
@@ -260,18 +258,4 @@ export class ContentCalendarComponent implements OnInit {
     isEditOn(): boolean {
         return this.isAuthenticated() && this.authService.isEdit();
     }
-
-    deleteContent() {
-        this.confirmModel = {
-            title: 'Delete Content?',
-            message: `Are you sure you want to delete this content? It cannot be undone.`,
-            onOk: () => {
-                this.pagesService.deletePageContent(this.pageContentId).subscribe(() => {
-                    this.pageComponent.loadPage();
-                });
-            }
-        } as Confirm;
-        this.showDialog(this.confirmDialog);
-    }
-
 }

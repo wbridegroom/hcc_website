@@ -1,12 +1,10 @@
-import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap';
+import { Component, Input, OnInit } from '@angular/core';
 
-import { TextContent} from '../../shared/models/page-content';
+import {PageContent, TextContent} from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { TextContentBackup } from '../../shared/models/page-content';
-import {PageComponent} from '../page/page.component';
-import {Confirm} from '../../shared/models/confirm';
+import { PageComponent } from '../page/page.component';
 
 @Component({
   selector: 'app-content-text',
@@ -15,13 +13,9 @@ import {Confirm} from '../../shared/models/confirm';
 })
 export class ContentTextComponent implements OnInit {
 
-    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
-    modalRef: BsModalRef;
-    confirmModel: Confirm;
-
     @Input() pageComponent: PageComponent;
+    @Input() pageContent: PageContent;
     @Input() textContent: TextContent;
-    @Input() pageContentId: number;
 
     editing: boolean;
     backups: TextContentBackup[];
@@ -37,7 +31,7 @@ export class ContentTextComponent implements OnInit {
         theme: 'gray'
     };
 
-    constructor(private authService: AuthService, private pagesService: PagesService, private modalService: BsModalService) { }
+    constructor(private authService: AuthService, private pagesService: PagesService) { }
 
     ngOnInit() {
         if (this.textContent) {
@@ -49,10 +43,6 @@ export class ContentTextComponent implements OnInit {
         this.pagesService.loadTextContentBackups(this.textContent.id).subscribe((backups: TextContentBackup[]) => {
             this.backups = backups;
         });
-    }
-
-    showDialog(dialog) {
-        this.modalRef = this.modalService.show(dialog);
     }
 
     isAuthenticated(): boolean {
@@ -84,18 +74,5 @@ export class ContentTextComponent implements OnInit {
             this.textContent = textContent;
             this.loadBackups();
         });
-    }
-
-    deleteContent() {
-        this.confirmModel = {
-            title: 'Delete Content?',
-            message: `Are you sure you want to delete this content? It cannot be undone.`,
-            onOk: () => {
-                this.pagesService.deletePageContent(this.pageContentId).subscribe(() => {
-                    this.pageComponent.loadPage();
-                });
-            }
-        } as Confirm;
-        this.showDialog(this.confirmDialog);
     }
 }

@@ -113,8 +113,14 @@
     <div id='calendar'></div>
 
     <div class="adminPanel" *ngIf="isEditOn()">
-        <button class="btn btn-sm btn-danger adminButton" (click)="deleteContent()">
+        <button class="btn btn-sm btn-danger adminButton" (click)="pageComponent.deleteContent(pageContent.id)">
             <i class="fas fa-trash-alt"></i> Delete
+        </button>
+        <button *ngIf="pageContent && pageContent.index !== 0" class="btn btn-sm btn-secondary adminButton" (click)="pageComponent.moveContentUp(pageContent.id)">
+            <i class="fas fa-angle-up"></i> Move Up
+        </button>
+        <button *ngIf="pageContent && pageContent.index < pageComponent.page.pageContents.length - 1" class="btn btn-sm btn-secondary adminButton" (click)="pageComponent.moveContentDown(pageContent.id)">
+            <i class="fas fa-angle-down"></i> Move Down
         </button>
     </div>
 </div>

@@ -1,21 +1,3 @@
-<span *ngIf="isEditOn()">
-    <ng-template #confirmationDialog>
-        <div class="modal-header">
-            <h4 class="modal-title">{{ confirmModel.title }}</h4>
-            <button type="button" class="close pull-right" (click)="modalRef.hide()">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            {{ confirmModel.message }}
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" (click)="modalRef.hide(); confirmModel.onOk()"><i class="fas fa-check"></i> Yes</button>
-            <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> No</button>
-        </div>
-    </ng-template>
-</span>
-
 <div *ngIf="editing && textContent" [froalaEditor]="options" [(froalaModel)]="textContent.content" ></div>
 <div *ngIf="!editing && textContent" [froalaView]="textContent.content" style="min-height: 35px;"></div>
 <div class="adminPanel" *ngIf="isEditOn()">
@@ -30,8 +12,14 @@
         <button *ngIf="editing" class="btn btn-sm btn-warning adminButton" (click)="cancelEdit()">
             <i class="fas fa-ban"></i> Cancel
         </button>
-        <button *ngIf="!editing && pageContentId" class="btn btn-sm btn-danger adminButton" (click)="deleteContent()">
+        <button *ngIf="!editing && pageContent" class="btn btn-sm btn-danger adminButton" (click)="pageComponent.deleteContent(pageContent.id)">
             <i class="fas fa-trash-alt"></i> Delete
+        </button>
+        <button *ngIf="pageContent && pageContent.index !== 0" class="btn btn-sm btn-secondary adminButton" (click)="pageComponent.moveContentUp(pageContent.id)">
+            <i class="fas fa-angle-up"></i> Move Up
+        </button>
+        <button *ngIf="pageContent && pageContent.index < pageComponent.page.pageContents.length - 1" class="btn btn-sm btn-secondary adminButton" (click)="pageComponent.moveContentDown(pageContent.id)">
+            <i class="fas fa-angle-down"></i> Move Down
         </button>
         </div>
         <div class="col-auto">

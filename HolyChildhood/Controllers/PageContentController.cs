@@ -30,6 +30,7 @@ namespace HolyChildhood.Controllers
                 .Include(pc => pc.TabContent).ThenInclude(tc => tc.Tabs).ThenInclude(t => t.TextContent)
                 .Include(pc => pc.CalendarContent).ThenInclude(cc => cc.Calendar).ThenInclude(c => c.Events)
                 .Include(pc => pc.FileContent).ThenInclude(fc => fc.Files)
+                .OrderBy(pc => pc.Index)
                 .FirstOrDefaultAsync(pc => pc.Id == id);
 
             if (pageContent == null) return NotFound();
@@ -57,6 +58,43 @@ namespace HolyChildhood.Controllers
                 if (!PageContentExists(id)) return NotFound();
                 throw;
             }
+
+            return NoContent();
+        }
+
+        [HttpPost("moveup/{id}")]
+        [Authorize]
+        public async Task<IActionResult> MoveContentUp(int id)
+        {
+            var content = await dbContext.PageContents.FindAsync(id);
+            if (content.Index == 0) return NoContent();
+
+            var prevContent = await dbContext.PageContents.Where(pc => pc.PageId == content.PageId && pc.Index == (content.Index - 1)).FirstAsync();
+            if (prevContent == null) return NoContent();
+
+            content.Index = content.Index - 1;
+            prevContent.Index = prevContent.Index + 1;
+
+            dbContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost("movedown/{id}")]
+        [Authorize]
+        public async Task<IActionResult> MoveContentDown(int id)
+        {
+            var content = await dbContext.PageContents.FindAsync(id);
+            var total = await dbContext.PageContents.CountAsync(pc => pc.PageId == content.PageId);
+            if (content.Index == total - 1) return NoContent();
+
+            var nextContent = await dbContext.PageContents.Where(pc => pc.PageId == content.PageId && pc.Index == (content.Index + 1)).FirstAsync();
+            if (nextContent == null) return NoContent();
+
+            content.Index = content.Index + 1;
+            nextContent.Index = nextContent.Index - 1;
+
+            dbContext.SaveChangesAsync();
 
             return NoContent();
         }

@@ -112,6 +112,31 @@ export class PageComponent implements OnInit {
         });
     }
 
+    deleteContent(id) {
+        this.confirmModel = {
+            title: 'Delete Content?',
+            message: `Are you sure you want to delete this content? It cannot be undone.`,
+            onOk: () => {
+                this.pagesService.deletePageContent(id).subscribe(() => {
+                    this.loadPage();
+                });
+            }
+        } as Confirm;
+        this.showDialog(this.confirmDialog);
+    }
+
+    moveContentUp(id) {
+        this.pagesService.moveContentUp(id).subscribe(() => {
+            this.loadPage();
+        });
+    }
+
+    moveContentDown(id) {
+        this.pagesService.moveContentDown(id).subscribe(() => {
+            this.loadPage();
+        });
+    }
+
     editPage() {
         this.pageEdit = Object.assign({}, this.page);
         this.showDialog(this.editPageDialog);
