@@ -83,6 +83,11 @@ export class ContentCalendarComponent implements OnInit {
     ngOnInit() {
         $('#calendar').fullCalendar({
             themeSystem: 'bootstrap4',
+            header: {
+                left: 'title',
+                center: '',
+                right: 'today month,listMonth prev,next'
+            },
             events: (start, end, timezone, callback) => this.getEvents(start, end, callback),
             eventRender: (event, element) => this.renderEvent(event, element),
             eventClick: (event) => this.onClick(event)

@@ -36,13 +36,19 @@
                     UserName is required
                 </div>
             </div>
-            <div class="ui-g-6" style="margin-top: 8px">
+            <div class="ui-g-2" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="title" type="text" class="form-control" pInputText formControlName="title">
+                    <label for="title">Title</label>
+                </span>
+            </div>
+            <div class="ui-g-5" style="margin-top: 8px">
                 <span class="ui-float-label">
                     <input id="firstName" type="text" class="form-control" pInputText formControlName="firstName">
                     <label for="firstName">First Name</label>
                 </span>
             </div>
-            <div class="ui-g-6" style="margin-top: 8px">
+            <div class="ui-g-5" style="margin-top: 8px">
                 <span class="ui-float-label">
                     <input id="lastName" type="text" class="form-control" pInputText formControlName="lastName">
                     <label for="lastName">Last Name</label>
@@ -91,105 +97,159 @@
     </div>
 </ng-template>
 
+<ng-template #eventTypeDialog>
+    <div class="modal-header">
+        <h4 class="modal-title">Event Color</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <p-colorPicker [(ngModel)]="eventType.color" [inline]="true"></p-colorPicker>
+                <p style="margin-top:.5em">Selected Color: <span style="display:inline-block;width:32px;height:32px;vertical-align:middle" [style.backgroundColor]="eventType.color"></span> {{ eventType.color }} </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="modalRef.hide(); saveEventType()">
+            <i class="fas fa-check"></i> Ok
+        </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()">
+            <i class="fas fa-ban"></i> Cancel
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #changePasswordDialog>
+    <div class="modal-header">
+        <h4 class="modal-title">Change Password</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body" [formGroup]="passwordForm">
+        <div class="ui-g">
+            <div class="ui-g-12" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="newPassword" type="password" class="form-control" pPassword required formControlName="newPassword">
+                    <label for="newPassword">New Password</label>
+                </span>
+                <div *ngIf="newPassword.invalid && (newPassword.dirty || newPassword.touched)" class="invalid">
+                    <div *ngIf="newPassword.errors.required">
+                        New Password is required
+                    </div>
+                    <div *ngIf="newPassword.errors.pattern">
+                        Password must contain at least one Uppercase letter, one Lowercase letter, one digit and must be between 8 and 15 characters
+                    </div>
+                </div>
+                <div *ngIf="(newConfirmPassword.dirty || newConfirmPassword.touched) && newPassword.value !== newConfirmPassword.value" class="invalid">
+                    Passwords do not match
+                </div>
+            </div>
+            <div class="ui-g-12" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="newConfirmPassword" type="password" class="form-control" pPassword required formControlName="newConfirmPassword">
+                    <label for="newConfirmPassword">Confirm Password</label>
+                </span>
+                <div *ngIf="newConfirmPassword.invalid && (newConfirmPassword.dirty || newConfirmPassword.touched)" class="invalid">
+                    Confirm Password is required
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" [disabled]="passwordForm.invalid || newPassword.value !== newConfirmPassword.value" (click)="modalRef.hide(); changePassword()">
+            <i class="fas fa-check"></i> Ok
+        </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()">
+            <i class="fas fa-ban"></i> Cancel
+        </button>
+    </div>
+</ng-template>
+
+<p-toast position="center"></p-toast>
+
 <br />
-<button class="btn btn-sm btn-outline-success" (click)="showAddUser()" style="margin-left: 0; margin-bottom:15px">
-    <i class="fas fa-plus"></i> Add User
-</button>
-<p-card>
-    <p-header>
-        <h4>
-            <i class="fas fa-users"></i> Users
-        </h4>
-    </p-header>
-    <p-table [value]="users" [responsive]="true" [tableStyle]="{'table-layout': 'auto'}">
-        <ng-template pTemplate="header">
-            <tr>
-                <th class="hcc-table-header">UserName</th>
-                <th class="hcc-table-header">First Name</th>
-                <th class="hcc-table-header">Last Name</th>
-                <th class="hcc-table-header" style="min-width: 200px">Email Address</th>
-                <th class="hcc-table-header">Roles</th>
-                <th class="hcc-table-header" style="min-width: 120px"></th>
-            </tr>
+
+<tabset>
+    <tab>
+        <ng-template tabHeading>
+            <h5>
+                <i class="fas fa-users"></i> Users
+            </h5>
         </ng-template>
-        <ng-template pTemplate="body" let-user>
-            <tr>
-                <td class="hcc-table-cell">{{ user.userName }}</td>
-                <td class="hcc-table-cell">{{ user.firstName }}</td>
-                <td class="hcc-table-cell">{{ user.lastName }}</td>
-                <td class="hcc-table-cell" style="min-width: 200px">{{ user.email }}</td>
-                <td class="hcc-table-cell">{{ user.roles }}</td>
-                <td class="hcc-table-cell" style="min-width: 120px">
-                    <button mat-icon-button color="primary" (click)="showEditUser(user)">
-                        <mat-icon>create</mat-icon>
-                    </button>
-                    <button mat-icon-button color="warn" (click)="deleteUser(user)">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </td>
-            </tr>
+        <br/>
+        <button class="btn btn-sm btn-outline-success" (click)="showAddUser()" style="margin-left: 0; margin-bottom:15px">
+            <i class="fas fa-plus"></i> Add User
+        </button>
+
+        <p-table [value]="users" [responsive]="true" [tableStyle]="{'table-layout': 'auto'}">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="hcc-table-header">UserName</th>
+                    <th class="hcc-table-header">First Name</th>
+                    <th class="hcc-table-header">Last Name</th>
+                    <th class="hcc-table-header" style="min-width: 200px">Email Address</th>
+                    <th class="hcc-table-header">Roles</th>
+                    <th class="hcc-table-header" style="min-width: 120px"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-user>
+                <tr>
+                    <td class="hcc-table-cell">{{ user.userName }}</td>
+                    <td class="hcc-table-cell">{{ user.firstName }}</td>
+                    <td class="hcc-table-cell">{{ user.lastName }}</td>
+                    <td class="hcc-table-cell" style="min-width: 200px">{{ user.email }}</td>
+                    <td class="hcc-table-cell">{{ user.roles }}</td>
+                    <td class="hcc-table-cell" style="min-width: 120px">
+                        <button mat-icon-button color="primary" (click)="showEditUser(user)" pTooltip="Edit" tooltipPosition="top">
+                            <mat-icon>create</mat-icon>
+                        </button>
+                        <button *ngIf="user.userName !== 'admin'" mat-icon-button color="warn" (click)="deleteUser(user)" pTooltip="Delete" tooltipPosition="top">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                        <button mat-icon-button color="accent" (click)="showChangePassword(user)" pTooltip="Change Password" tooltipPosition="top">
+                            <mat-icon>lock_open</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </tab>
+    <tab>
+        <ng-template tabHeading>
+            <h5><i class="far fa-calendar"></i> Event Types</h5>
         </ng-template>
-    </p-table>
-</p-card>
+        <br />
 
-<!--<mat-tab-group>-->
-    <!--<mat-tab>-->
-        <!--<ng-template mat-tab-label>-->
-            <!--<i class="fas fa-users"></i>&nbsp;Users-->
-        <!--</ng-template>-->
-
-        <!--<div class="row">-->
-            <!--<div class="col-md-12">-->
-                <!--<button mat-raised-button color="primary" class="hccButton" (click)="showAddUser()">-->
-                    <!--<mat-icon>add</mat-icon> Add User-->
-                <!--</button>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="row">-->
-            <!--<div class="col-md-12">-->
-                <!--<table mat-table [dataSource]="users" class="mat-elevation-z8" width="100%">-->
-                    <!--<ng-container matColumnDef="username">-->
-                        <!--<th mat-header-cell *matHeaderCellDef>UserName</th>-->
-                        <!--<td mat-cell *matCellDef="let user">{{ user.userName }}</td>-->
-                    <!--</ng-container>-->
-                    <!--<ng-container matColumnDef="firstName">-->
-                        <!--<th mat-header-cell *matHeaderCellDef>First name</th>-->
-                        <!--<td mat-cell *matCellDef="let user">{{ user.firstName }}</td>-->
-                    <!--</ng-container>-->
-                    <!--<ng-container matColumnDef="lastName">-->
-                        <!--<th mat-header-cell *matHeaderCellDef>Last Name</th>-->
-                        <!--<td mat-cell *matCellDef="let user">{{ user.lastName }}</td>-->
-                    <!--</ng-container>-->
-                    <!--<ng-container matColumnDef="email">-->
-                        <!--<th mat-header-cell *matHeaderCellDef>Email</th>-->
-                        <!--<td mat-cell *matCellDef="let user">{{ user.email }}</td>-->
-                    <!--</ng-container>-->
-                    <!--<ng-container matColumnDef="roles">-->
-                        <!--<th mat-header-cell *matHeaderCellDef>Roles</th>-->
-                        <!--<td mat-cell *matCellDef="let user">{{ user.roles }}</td>-->
-                    <!--</ng-container>-->
-                    <!--<ng-container matColumnDef="actions">-->
-                        <!--<th mat-header-cell *matHeaderCellDef></th>-->
-                        <!--<td mat-cell *matCellDef="let user">-->
-                            <!--<button mat-icon-button color="primary">-->
-                                <!--<mat-icon>create</mat-icon>-->
-                            <!--</button>-->
-                            <!--<button mat-icon-button color="warn">-->
-                                <!--<mat-icon>delete</mat-icon>-->
-                            <!--</button>-->
-                        <!--</td>-->
-                    <!--</ng-container>-->
-
-                    <!--<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
-                    <!--<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
-                <!--</table>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</mat-tab>-->
-    <!--<mat-tab label="Roles">-->
-        <!--Roles-->
-    <!--</mat-tab>-->
-    <!--<mat-tab label="Other Settings">-->
-        <!--Other Settings-->
-    <!--</mat-tab>-->
-<!--</mat-tab-group>-->
+        <p-table [value]="eventTypes" [responsive]="true" [tableStyle]="{'table-layout': 'auto'}">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="hcc-table-header">Name</th>
+                    <th class="hcc-table-header">Color</th>
+                    <th class="hcc-table-header"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-eventType>
+                <tr>
+                    <td class="hcc-table-cell">{{ eventType.name }}</td>
+                    <td class="hcc-table-cell">
+                        <div [ngStyle]="{ 'background-color': eventType.color, 'color': 'white', 'border-radius': '5px', 'text-align': 'center', 'font-weight': 'bold', 'padding': '3px' }">
+                            {{ eventType.color }}
+                        </div>
+                    </td>
+                    <td class="hcc-table-cell">
+                        <button mat-icon-button color="primary" (click)="showEventTypeDialog(eventType)" pTooltip="Edit" tooltipPosition="top">
+                            <mat-icon>create</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </tab>
+</tabset>

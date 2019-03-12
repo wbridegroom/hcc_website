@@ -1,3 +1,155 @@
-<p>
-  profile works!
-</p>
+<ng-template #userDialog>
+    <div class="modal-header">
+        <h4 class="modal-title">Change Profile</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body" [formGroup]="userForm">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <span class="ui-float-label" style="margin-top: 8px">
+                    <input id="userName" type="text" class="form-control" pInputText required formControlName="userName">
+                    <label for="userName">UserName (first.last)</label>
+                </span>
+            </div>
+            <div class="ui-g-2" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="title" type="text" class="form-control" pInputText formControlName="title">
+                    <label for="title">Title <i>(Opt)</i></label>
+                </span>
+            </div>
+            <div class="ui-g-5" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="firstName" type="text" class="form-control" pInputText formControlName="firstName">
+                    <label for="firstName">First Name</label>
+                </span>
+            </div>
+            <div class="ui-g-5" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="lastName" type="text" class="form-control" pInputText formControlName="lastName">
+                    <label for="lastName">Last Name</label>
+                </span>
+            </div>
+            <div class="ui-g-12" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="email" type="text" class="form-control" pInputText required formControlName="email">
+                    <label for="email">Email Address</label>
+                </span>
+                <div *ngIf="email.invalid && (email.dirty || email.touched)" class="invalid">
+                    Email Address is required
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" [disabled]="userForm.invalid" (click)="modalRef.hide(); saveProfile()"><i class="fas fa-check"></i> Ok</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()"><i class="fas fa-ban"></i> Cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #changePasswordDialog>
+    <div class="modal-header">
+        <h4 class="modal-title">Change Password</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body" [formGroup]="passwordForm">
+        <div class="ui-g">
+            <div class="ui-g-12" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="currentPassword" type="password" class="form-control" pPassword required formControlName="currentPassword">
+                    <label for="currentPassword">Current Password</label>
+                </span>
+                <div *ngIf="currentPassword.invalid && (currentPassword.dirty || currentPassword.touched)" class="invalid">
+                    <div *ngIf="currentPassword.errors.required">
+                        Current Password is required
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="newPassword" type="password" class="form-control" pPassword required formControlName="newPassword">
+                    <label for="newPassword">New Password</label>
+                </span>
+                <div *ngIf="newPassword.invalid && (newPassword.dirty || newPassword.touched)" class="invalid">
+                    <div *ngIf="newPassword.errors.required">
+                        New Password is required
+                    </div>
+                    <div *ngIf="newPassword.errors.pattern">
+                        Password must contain at least one Uppercase letter, one Lowercase letter, one digit and must be between 8 and 15 characters
+                    </div>
+                </div>
+                <div *ngIf="(confirmPassword.dirty || confirmPassword.touched) && newPassword.value !== confirmPassword.value" class="invalid">
+                    Passwords do not match
+                </div>
+            </div>
+            <div class="ui-g-12" style="margin-top: 8px">
+                <span class="ui-float-label">
+                    <input id="confirmPassword" type="password" class="form-control" pPassword required formControlName="confirmPassword">
+                    <label for="confirmPassword">Confirm Password</label>
+                </span>
+                <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)" class="invalid">
+                    Confirm Password is required
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" [disabled]="passwordForm.invalid || newPassword.value !== confirmPassword.value" (click)="modalRef.hide(); changePassword()">
+            <i class="fas fa-check"></i> Ok
+        </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="modalRef.hide()">
+            <i class="fas fa-ban"></i> Cancel
+        </button>
+    </div>
+</ng-template>
+
+<br />
+<p-toast position="center"></p-toast>
+<h2>User Profile</h2>
+
+<div *ngIf="user" class="ui-g">
+    <div class="ui-g-2">
+        UserName
+    </div>
+    <div class="ui-g-10">
+        {{ user.userName }}
+    </div>
+    <div class="ui-g-2">
+        Title
+    </div>
+    <div class="ui-g-10">
+        {{ user.title    }}
+    </div>
+    <div class="ui-g-2">
+        First Name
+    </div>
+    <div class="ui-g-10">
+        {{ user.firstName }}
+    </div>
+    <div class="ui-g-2">
+        Last Name
+    </div>
+    <div class="ui-g-10">
+        {{ user.lastName }}
+    </div>
+    <div class="ui-g-2">
+        Email Address
+    </div>
+    <div class="ui-g-10">
+        {{ user.email }}
+    </div>
+    <div class="ui-g-12">
+        <button class="btn btn-sm btn-primary" (click)="showEditProfile()">
+            <i class="fas fa-edit"></i> Edit
+        </button>
+        <button class="btn btn-sm btn-outline-warning" style="margin-left: 5px;" (click)="showChangePassword()">
+            <i class="fas fa-unlock"></i> Change Password
+        </button>
+    </div>
+</div>

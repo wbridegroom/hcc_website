@@ -27,6 +27,7 @@ export class AuthService {
 
     logout(): boolean {
         this.setAuth(null);
+        this.setEdit(false);
         this.router.navigateByUrl('/home').then(() => {
             return true;
         });

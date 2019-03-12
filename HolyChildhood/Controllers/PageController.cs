@@ -34,6 +34,7 @@ namespace HolyChildhood.Controllers
         {
             var page = dbContext.Pages
                 .Include(p => p.Parent).ThenInclude(p => p.MenuItem)
+                .Include(p => p.Parent).ThenInclude(p => p.Children)
                 .Include(p => p.MenuItem) 
                 .Include(p => p.Children)
                 .Include(p => p.PageContents).ThenInclude(pc => pc.TextContent)

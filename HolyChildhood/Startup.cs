@@ -53,7 +53,7 @@ namespace HolyChildhood
                 opts.Password.RequireUppercase = true;
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequiredLength = 7;
-            }).AddEntityFrameworkStores<AppDbContext>();
+            }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
             services.AddAuthentication(opts =>
             {
@@ -134,7 +134,7 @@ namespace HolyChildhood
             var eventTypes = db.EventTypes.ToList();
             if (eventTypes.Count == 0)
             {
-                db.EventTypes.Add(new EventType { Name = "Regular", Color = "Blue" });
+                db.EventTypes.Add(new EventType { Name = "Standard", Color = "Blue" });
                 db.EventTypes.Add(new EventType { Name = "Meeting", Color = "Red" });
                 db.EventTypes.Add(new EventType { Name = "Mass", Color = "Green" });
                 db.EventTypes.Add(new EventType { Name = "Holiday", Color = "Gray" });

@@ -46,7 +46,29 @@ namespace HolyChildhood.Controllers
             return @event;
         }
 
+        [HttpGet("types/")]
+        public async Task<ActionResult<IEnumerable<EventType>>> GetEventTypes()
+        {
+            return await dbContext.EventTypes.ToListAsync();
+        }
+
+        [HttpPost("eventtype/{id}")]
+        [Authorize]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> UpdateEventType(int id, EventType eventType)
+        {
+            if (id != eventType.Id) return BadRequest();
+
+            dbContext.Entry(eventType).State = EntityState.Modified;
+
+            await dbContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         [HttpGet("upcoming/{count}")]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<List<EventViewModel>>> GetUpcomingEvents(int count)
         {
             var events = await dbContext.Events

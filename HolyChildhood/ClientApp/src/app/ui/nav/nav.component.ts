@@ -25,17 +25,17 @@ export class NavComponent implements OnInit {
     page: Page = {} as Page;
     menu: Menu = {} as Menu;
 
-    constructor(private authService: AuthService,
+    constructor(public authService: AuthService,
                 private modalService: BsModalService,
                 public navService: NavService) { }
 
     ngOnInit() {
         this.getMenu();
-        this.editModeOn = this.isEdit();
     }
 
     getMenu() {
         this.navService.loadMenu();
+        this.editModeOn = this.isEdit();
     }
 
     showDialog(dialog) {
@@ -50,6 +50,7 @@ export class NavComponent implements OnInit {
 
     logout() {
         this.authService.logout();
+        this.editModeOn = this.isEdit();
     }
 
     isAuthenticated(): boolean {

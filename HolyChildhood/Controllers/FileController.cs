@@ -37,15 +37,6 @@ namespace HolyChildhood.Controllers
         public async Task<ActionResult<IEnumerable<File>>> GetFilesByContentId(int id)
         {
             return await dbContext.Files.Where(f => f.FileContentId == id).OrderByDescending(f => f.CreatedAt).ToListAsync();
-            //var dbFile = await dbContext.Files.FindAsync(id);
-            //if (dbFile == null) return NotFound();
-
-            //var path = "wwwroot/files/" + dbFile.Id + "." + dbFile.Type;
-            //if (!System.IO.File.Exists(path)) return NotFound();
-
-            //var file = System.IO.File.OpenRead(path);
-
-            //return File(file, "application/pdf");
         }
 
         // POST: api/File

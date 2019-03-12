@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { AppRouting } from './app.routing';
-import { HomeComponent } from './home/home.module';
+import { HomeComponent } from './home/home.component';
 import { UiModule } from './ui/ui.module';
 import { AuthService } from './shared/services/auth.service';
 import { AuthInterceptor } from './shared/services/auth.interceptor';
@@ -25,15 +25,15 @@ import { ButtonModule } from 'primeng/primeng';
 import { SelectButtonModule } from 'primeng/primeng';
 import { CheckboxModule } from 'primeng/primeng';
 import { CardModule } from 'primeng/primeng';
+import { ToastModule } from 'primeng/toast';
+import { TooltipModule} from 'primeng/primeng';
+import { ColorPickerModule } from 'primeng/primeng';
 
-import { MatTabsModule } from '@angular/material';
-import { MatTableModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material';
-import { MatFormFieldModule } from '@angular/material';
 
 import { ModalModule } from 'ngx-bootstrap';
+import { TabsModule } from 'ngx-bootstrap';
 import { PopoverModule } from 'ngx-bootstrap';
 
 @NgModule({
@@ -44,8 +44,8 @@ import { PopoverModule } from 'ngx-bootstrap';
         ProfileComponent
     ],
     imports: [
-        BrowserModule,
         AppRouting,
+        BrowserModule,
         UiModule,
         PagesModule,
         FroalaEditorModule,
@@ -61,13 +61,13 @@ import { PopoverModule } from 'ngx-bootstrap';
         ButtonModule,
         SelectButtonModule,
         CheckboxModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatTabsModule,
-        MatTableModule,
+        ColorPickerModule,
+        ToastModule,
+        TooltipModule,
         MatButtonModule,
         MatIconModule,
         ModalModule,
+        TabsModule.forRoot(),
         PopoverModule.forRoot()
     ],
     providers: [
