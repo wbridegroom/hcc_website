@@ -106,10 +106,7 @@ namespace HolyChildhood.Controllers
             try
             {
                 var appUser = await userManager.FindByNameAsync(user.UserName);
-                if (appUser == null)
-                {
-                    return NotFound();
-                }
+                if (appUser == null) return NotFound();
 
                 appUser.Title = user.Title;
                 appUser.UserName = user.UserName;
@@ -143,6 +140,33 @@ namespace HolyChildhood.Controllers
             {
                 return NotFound(e);
             }
+
+            return NoContent();
+        }
+
+        [HttpPost("changepassword/{userName}")]
+        [Authorize]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> ChangePassword(string userName, PasswordViewModel passwordModel)
+        {
+            var appUser = await userManager.FindByNameAsync(userName);
+            if (appUser == null) return NotFound();
+
+            await userManager.ChangePasswordAsync(appUser, passwordModel.CurrentPassword, passwordModel.NewPassword);
+            
+            return NoContent();
+        }
+
+        [HttpPost("resetpassword/{userName}")]
+        [Authorize]
+        public async Task<IActionResult> ResetPassword(string userName, PasswordViewModel passwordModel)
+        {
+            var appUser = await userManager.FindByNameAsync(userName);
+            if (appUser == null) return NotFound();
+
+            var token = await userManager.GeneratePasswordResetTokenAsync(appUser);
+            await userManager.ResetPasswordAsync(appUser, token, passwordModel.NewPassword);
 
             return NoContent();
         }

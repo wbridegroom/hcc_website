@@ -88,22 +88,22 @@
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">{{ menuItem.name }}</a>
                 <div class="dropdown-menu">
 
-                    <a *ngFor="let page of menuItem.pages" class="dropdown-item" routerLink="/pages/{{ page.id }}">{{ page.title }}</a>
+                    <a *ngFor="let page of menuItem.pages" class="dropdown-item" routerLinkActive="active" routerLink="/pages/{{ page.id }}">{{ page.title }}</a>
 
-                    <div *ngIf="isEdit()" class="dropdown-divider"></div>
-                    <a *ngIf="isEdit()" class="dropdown-item" (click)="showPageDialog(menuItem)" style="cursor: pointer;">
+                    <div *ngIf="isEdit() && authService.isAdministrator()" class="dropdown-divider"></div>
+                    <a *ngIf="isEdit() && authService.isAdministrator()" class="dropdown-item" (click)="showPageDialog(menuItem)" style="cursor: pointer;">
                         <i class="fas fa-plus"></i><i> Add Page...</i>
                     </a>
-                    <a *ngIf="isEdit()" class="dropdown-item" (click)="showMenuDialog(menuItem)" style="cursor: pointer;">
+                    <a *ngIf="isEdit() && authService.isAdministrator()" class="dropdown-item" (click)="showMenuDialog(menuItem)" style="cursor: pointer;">
                         <i class="fas fa-pencil-alt"></i><i> Edit Menu...</i>
                     </a>
-                    <a *ngIf="isEdit() && menuItem.pages.length == 0" class="dropdown-item" (click)="deleteMenu(menuItem)" style="cursor: pointer;">
+                    <a *ngIf="isEdit() && authService.isAdministrator() && menuItem.pages.length == 0" class="dropdown-item" (click)="deleteMenu(menuItem)" style="cursor: pointer;">
                         <i class="fas fa-trash"></i><i> Delete Menu</i>
                     </a>
                 </div>
             </li>
 
-            <div *ngIf="isEdit()">
+            <div *ngIf="isEdit() && authService.isAdministrator()">
                 <button class="btn btn-sm btn-success adminButton" style="margin-top: 8px" (click)="showMenuDialog(null)">
                     <i class="fas fa-plus"></i> Add Menu
                 </button>

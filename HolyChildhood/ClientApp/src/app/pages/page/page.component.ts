@@ -149,6 +149,10 @@ export class PageComponent implements OnInit {
         });
     }
 
+    isSubPage(): boolean {
+        return this.page.parent != null;
+    }
+
     showAddSubPageDialog() {
         this.pageAdd = {} as Page;
         this.pageAdd.parent = this.page;

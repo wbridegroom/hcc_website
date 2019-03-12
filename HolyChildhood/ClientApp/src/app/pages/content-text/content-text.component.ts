@@ -26,6 +26,7 @@ export class ContentTextComponent implements OnInit {
         imageManagerDeleteMethod: 'DELETE',
         imageManagerDeleteURL: '/api/image',
         imageManagerLoadURL: '/api/image',
+        fileUploadURL: '/api/embeddedFile',
         placeholderText: 'Enter text here...',
         tabSpaces: 4,
         theme: 'gray'

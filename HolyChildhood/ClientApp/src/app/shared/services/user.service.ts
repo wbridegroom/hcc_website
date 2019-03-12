@@ -23,9 +23,9 @@ export class UserService {
         return this.http.get<User[]>(url);
     }
 
-    getUser(username: string) {
+    getUser(username: string): Observable<User> {
         const url = `/api/account/${username}`;
-        return this.http.get(url);
+        return this.http.get<User>(url);
     }
 
     createUser(user: User) {
@@ -41,5 +41,15 @@ export class UserService {
     deleteUser(user: User) {
         const url = `/api/account/${user.userName}`;
         return this.http.delete(url);
+    }
+
+    changePassword(userName, passwordModel) {
+        const url = `/api/account/changepassword/${userName}`;
+        return this.http.post(url, passwordModel, options);
+    }
+
+    resetPassword(userName, passwordModel) {
+        const url = `/api/account/resetpassword/${userName}`;
+        return this.http.post(url, passwordModel, options);
     }
 }

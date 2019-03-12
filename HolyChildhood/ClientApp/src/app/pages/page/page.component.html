@@ -94,10 +94,10 @@
                 <a class="dropdown-item" [routerLink]="" (click)="createContent('Files')">PDF Viewer</a>
             </div>
         </div>
-        <button class="btn btn-sm btn-primary adminButton" (click)="editPage()">
+        <button *ngIf="authService.isAdministrator()" class="btn btn-sm btn-primary adminButton" (click)="editPage()">
             <i class="fas fa-edit"></i> Edit Page
         </button>
-        <button class="btn btn-sm btn-danger adminButton" (click)="deletePage()">
+        <button *ngIf="authService.isAdministrator() || isSubPage()" [disabled]="page.children.length > 0" class="btn btn-sm btn-danger adminButton" (click)="deletePage()">
             <i class="fas fa-trash-alt"></i> Delete Page
         </button>
         <button *ngIf="page && !page.parent" class="btn btn-sm btn-success adminButton" (click)="showAddSubPageDialog()">

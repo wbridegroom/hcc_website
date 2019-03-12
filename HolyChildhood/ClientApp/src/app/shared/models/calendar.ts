@@ -4,6 +4,12 @@ export interface Calendar {
     events: Event[];
 }
 
+export interface EventType {
+    id: number;
+    name: string;
+    color: string;
+}
+
 export interface Event {
     id: number;
     calendarId: number;
