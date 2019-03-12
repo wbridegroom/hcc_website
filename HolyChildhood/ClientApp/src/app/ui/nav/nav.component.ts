@@ -25,7 +25,7 @@ export class NavComponent implements OnInit {
     page: Page = {} as Page;
     menu: Menu = {} as Menu;
 
-    constructor(private authService: AuthService,
+    constructor(public authService: AuthService,
                 private modalService: BsModalService,
                 public navService: NavService) { }
 
