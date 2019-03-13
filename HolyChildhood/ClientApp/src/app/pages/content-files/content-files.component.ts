@@ -71,7 +71,11 @@ export class ContentFilesComponent implements OnInit {
     }
 
     isEditOn(): boolean {
-        return this.isAuthenticated() && this.authService.isEdit();
+        return this.isAuthenticated() && this.authService.isEdit() && (this.authService.isAdministrator() || this.authService.isEditor());
+    }
+
+    canManageFiles(): boolean {
+        return this.isAuthenticated() && (this.authService.isAdministrator() || this.authService.isEditor());
     }
 
     showUploadFileDialog() {

@@ -82,7 +82,7 @@
     <h2>{{ fileContent.title }}</h2>
 </div>
 
-<div *ngIf="isAuthenticated()">
+<div *ngIf="canManageFiles()">
     <button type="button" class="btn btn-sm btn-primary" (click)="showUploadFileDialog()" ngbTooltip="Upload PDF">
         <i class="fas fa-file-upload"></i> Upload
     </button>
@@ -98,7 +98,7 @@
     <button class="btn btn-sm btn-primary"  type="button" (click)="downloadFile()" ngbTooltip="Download PDF">
         <i class="fas fa-external-link-alt"></i> Open
     </button>
-    <button *ngIf="isAuthenticated()" class="btn btn-sm btn-danger" style="margin-left: 5px;" type="button" (click)="deleteFile()" ngbTooltip="Delete Current PDF">
+    <button *ngIf="canManageFiles()" class="btn btn-sm btn-danger" style="margin-left: 5px;" type="button" (click)="deleteFile()" ngbTooltip="Delete Current PDF">
         <i class="fas fa-trash"></i>
     </button>
 </div>

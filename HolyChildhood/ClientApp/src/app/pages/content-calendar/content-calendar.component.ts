@@ -141,7 +141,7 @@ export class ContentCalendarComponent implements OnInit {
             tooltip += '<b>Description:</b><br />';
             tooltip += event.description;
         }
-        if (this.isAuthenticated()) {
+        if (this.canManageEvents()) {
             tooltip += '<br /><br /><i style="color:darkred">(Click on event to edit)</i>';
         }
         tooltip += '</p>';
@@ -149,7 +149,7 @@ export class ContentCalendarComponent implements OnInit {
     }
 
     onClick(calEvent) {
-        if (this.isAuthenticated()) {
+        if (this.canManageEvents()) {
             this.editEvent(calEvent);
         }
     }
@@ -258,6 +258,10 @@ export class ContentCalendarComponent implements OnInit {
 
     isAuthenticated(): boolean {
         return this.authService.isLoggedIn();
+    }
+
+    canManageEvents(): boolean {
+        return this.isAuthenticated() && (this.authService.isAdministrator() || this.authService.isEditor());
     }
 
     isEditOn(): boolean {
