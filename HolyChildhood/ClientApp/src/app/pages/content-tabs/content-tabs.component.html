@@ -39,19 +39,21 @@
 <ngb-tabset (tabChange)="beforeTabChange($event)">
     <ngb-tab *ngFor="let tab of tabContent.tabs">
         <ng-template ngbTabTitle>
-            {{ tab.title }}
-            <span *ngIf="isEditOn()">
-                &nbsp;
-                <a href="#" (click)="showTabDialog(tab)">
-                    <i class="fas fa-edit"></i>
-                </a>
-                &nbsp;
-                <a href="#" (click)="deleteTab(tab)">
-                    <span style="color: red">
-                        <i class="fas fa-close"></i>
-                    </span>
-                </a>
-            </span>
+            <h5>
+                {{ tab.title }}
+                <span *ngIf="isEditOn()">
+                    &nbsp;
+                    <a href="#" (click)="showTabDialog(tab)">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    &nbsp;
+                    <a href="#" (click)="deleteTab(tab)">
+                        <span style="color: red">
+                            <i class="fas fa-close"></i>
+                        </span>
+                    </a>
+                </span>
+            </h5>
         </ng-template>
         <ng-template ngbTabContent>
             <app-content-text [textContent]="tab.textContent"></app-content-text>
@@ -65,6 +67,7 @@
         </ng-template>
     </ngb-tab>
 </ngb-tabset>
+
 <div class="adminPanel" *ngIf="isEditOn()">
     <button class="btn btn-sm btn-danger adminButton" (click)="pageComponent.deleteContent(pageContent.id)">
         <i class="fas fa-trash-alt"></i> Delete
