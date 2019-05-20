@@ -6,7 +6,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 import { Page } from '../../shared/models/page';
 import { Confirm } from '../../shared/models/confirm';
-import { CalendarContent, FileContent, PageContent, TabContent, TextContent } from '../../shared/models/page-content';
+import { CalendarContent, FileContent, PageContent, TabContent, TextContent, FormContent } from '../../shared/models/page-content';
 import { PagesService } from '../pages.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { NavService } from '../../shared/services/nav.service';
@@ -102,6 +102,9 @@ export class PageComponent implements OnInit {
         } else if (contentType === 'Calendar') {
             // @TODO Replace calendarId with specified id
             this.content.calendarContent = { calendarId: 1 } as CalendarContent;
+            this.addContent();
+        } else if (contentType === 'Form') {
+            this.content.formContent = {} as FormContent;
             this.addContent();
         }
     }

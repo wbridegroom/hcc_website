@@ -1,0 +1,223 @@
+<!--<button class="btn btn-sm btn-success adminButton" (click)="addField('test')">Add Field</button>-->
+
+<!--<div *ngFor="let field of formFields" class="row">-->
+<!--    <div class="col-md-12">-->
+<!--        <span class="ui-float-label">-->
+<!--            <input id="fileTypeTitle" type="text" size="30" pInputText>-->
+<!--            <label for="fileTypeTitle">{{field}}</label>-->
+<!--        </span>-->
+<!--    </div>-->
+<!--</div>-->
+<div *ngIf="formSent">
+
+    <br />
+    <h4>Thanks for your information.  Someone will get back with you soon!</h4>
+    <br />
+    <button mat-raised-button color="primary" (click)="formSent = false"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Return to Form</button>
+</div>
+
+<div *ngIf="!formSent" style="padding: 10px">
+    <h5>Name</h5>
+    <div class="row">
+        <div class="col-md-3">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="First Name" required [(ngModel)]="formFields.firstName">
+            </mat-form-field>
+        </div>
+        <div class="col-md-3">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="Middle Name" [(ngModel)]="formFields.middleName">
+            </mat-form-field>
+        </div>
+        <div class="col-md-3">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="Last Name" required [(ngModel)]="formFields.lastName">
+            </mat-form-field>
+        </div>
+    </div>
+    <h5>Address</h5>
+    <div class="row">
+        <div class="col-md-7">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="Street" [(ngModel)]="formFields.street">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="City" [(ngModel)]="formFields.city">
+            </mat-form-field>
+        </div>
+        <div class="col-md-2">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="State" [(ngModel)]="formFields.state">
+            </mat-form-field>
+        </div>
+        <div class="col-md-2">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="Zipcode" [(ngModel)]="formFields.zipCode">
+            </mat-form-field>
+        </div>
+    </div>
+    <h5>Contact Info</h5>
+    <div class="row">
+        <div class="col-md-2">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="Home Phone" [(ngModel)]="formFields.homePhone" mask="(000) 000-0000">
+            </mat-form-field>
+        </div>
+        <div class="col-md-2">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="Mobile Phone" [(ngModel)]="formFields.mobilePhone" mask="(000) 000-0000">
+            </mat-form-field>
+        </div>
+        <div class="col-md-4">
+            <mat-form-field style="display: block">
+                <input matInput placeholder="Email Address" [(ngModel)]="formFields.emailAddress">
+            </mat-form-field>
+        </div>
+    </div>
+
+    <h5>Information</h5>
+
+    <div class="row">
+        <div class="col-md-3">
+            Do you have any children?
+        </div>
+        <div class="col-md-3">
+            <mat-radio-group [(ngModel)]="formFields.hasChildren">
+                <mat-radio-button [value]="true" (click)="addChild()">Yes</mat-radio-button>
+                &nbsp;&nbsp;
+                <mat-radio-button [value]="false" (click)="removeChildren()">No</mat-radio-button>
+            </mat-radio-group>
+        </div>
+    </div>
+    <div *ngIf="formFields.hasChildren">
+        <div *ngFor="let child of formFields.children; let i = index" [attr.data-index]="i">
+            <b>Child {{i + 1}}:</b>
+            <div class="row">
+                <div class="col-md-3">
+                    <mat-form-field style="display: block">
+                        <input matInput placeholder="First Name" [(ngModel)]="child.firstName">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-3">
+                    <mat-form-field style="display: block">
+                        <input matInput placeholder="Middle Name" [(ngModel)]="child.middleName">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-3">
+                    <mat-form-field style="display: block">
+                        <input matInput placeholder="Last Name" [(ngModel)]="child.lastName">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <mat-form-field style="display: block">
+                        <input matInput placeholder="Date of Birth" [(ngModel)]="child.birthday">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                    <mat-form-field style="display: block">
+                        <input matInput placeholder="Current School" [(ngModel)]="child.school">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <mat-form-field style="display: block">
+                        <input matInput placeholder="Grade" [(ngModel)]="child.grade">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <button mat-raised-button color="accent" (click)="addChild()">
+            <i class="fas fa-plus"></i> Add Child
+        </button>
+    </div>
+
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-4">
+            Would you like to talk the pastor?
+        </div>
+        <div class="col-md-3">
+            <mat-radio-group [(ngModel)]="formFields.talkToPastor">
+                <mat-radio-button [value]="true">Yes</mat-radio-button>
+                &nbsp;&nbsp;
+                <mat-radio-button [value]="false">No</mat-radio-button>
+            </mat-radio-group>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="formFields.talkToPastor">
+        <div class="col-md-6">
+            <mat-form-field style="display: block;">
+                <input matInput placeholder="What is the best day/time to reach you?" [(ngModel)]="formFields.bestTimeDay">
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <mat-form-field>
+                <mat-label>What are you most interested in knowing about our parish? </mat-label>
+                <mat-select [formControl]="interests" multiple>
+                    <mat-option *ngFor="let interestOption of interestOptions" [value]="interestOption">
+                        {{interestOption}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row" *ngIf="interests && interests.value && interests.value.length > 0 && interests.value.indexOf('Other') >= 0">
+        <div class="col-md-6">
+            <mat-form-field style="display: block;">
+                <input matInput placeholder="Other">
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <mat-form-field>
+                <mat-label>How did you hear about our parish?</mat-label>
+                <mat-select [(ngModel)]="formFields.heardHow">
+                    <mat-option *ngFor="let heardAboutOption of heardAboutOptions" [value]="heardAboutOption">
+                        {{heardAboutOption}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-md-4" *ngIf="formFields.heardHow === 'Other'">
+            <mat-form-field style="display: block;">
+                <input matInput placeholder="Other" [(ngModel)]="formFields.heardHowOther">
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <mat-form-field style="display: block">
+                <textarea matInput placeholder="Questions/Comments" rows="5" [(ngModel)]="formFields.comments"></textarea>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <button mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
+        </div>
+    </div>
+</div>
+
+<div class="adminPanel" *ngIf="isEditOn()">
+    <button class="btn btn-sm btn-danger adminButton" (click)="pageComponent.deleteContent(pageContent.id)">
+        <i class="fas fa-trash-alt"></i> Delete
+    </button>
+    <button *ngIf="pageContent && pageContent.index !== 0" class="btn btn-sm btn-secondary adminButton" (click)="pageComponent.moveContentUp(pageContent.id)">
+        <i class="fas fa-angle-up"></i> Move Up
+    </button>
+    <button *ngIf="pageContent && pageContent.index < pageComponent.page.pageContents.length - 1" class="btn btn-sm btn-secondary adminButton" (click)="pageComponent.moveContentDown(pageContent.id)">
+        <i class="fas fa-angle-down"></i> Move Down
+    </button>
+</div>

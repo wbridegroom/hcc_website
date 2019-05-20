@@ -19,10 +19,12 @@ import { SelectButtonModule } from 'primeng/primeng';
 import { ToastModule } from 'primeng/toast';
 import { CalendarModule } from 'primeng/primeng';
 
-import { MatSelectModule } from '@angular/material';
+import {MatInputModule, MatSelectModule, MatFormFieldModule, MatRadioModule, MatListModule} from '@angular/material';
 import { MatButtonModule } from '@angular/material';
 
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+
+import {NgxMaskModule, IConfig} from 'ngx-mask';
 
 import { PagesService } from './pages.service';
 import { EventService } from '../shared/services/event.service';
@@ -31,6 +33,7 @@ import { ContentCalendarComponent } from './content-calendar/content-calendar.co
 import { ContentFilesComponent } from './content-files/content-files.component';
 import { ContentTabsComponent } from './content-tabs/content-tabs.component';
 import { ContentTextComponent } from './content-text/content-text.component';
+import { ContentFormsComponent } from './content-forms/content-forms.component';
 
 import 'jquery';
 
@@ -40,7 +43,8 @@ import 'jquery';
         ContentCalendarComponent,
         ContentFilesComponent,
         ContentTabsComponent,
-        ContentTextComponent
+        ContentTextComponent,
+        ContentFormsComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -63,7 +67,12 @@ import 'jquery';
         MatButtonModule,
         ModalModule.forRoot(),
         BsDatepickerModule.forRoot(),
-        CalendarModule
+        CalendarModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatRadioModule,
+        MatListModule,
+        NgxMaskModule.forRoot()
     ],
     providers: [
         PagesService,

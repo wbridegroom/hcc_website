@@ -15,6 +15,7 @@ export interface PageContent {
     tabContent: TabContent;
     calendarContent: CalendarContent;
     fileContent: FileContent;
+    formContent: FormContent;
 }
 
 export interface TextContent {
@@ -46,6 +47,10 @@ export interface FileContent {
     title: string;
     fileType: string;
     files: Pdf[];
+}
+
+export interface FormContent {
+    id: number;
 }
 
 export interface TextContentBackup {
