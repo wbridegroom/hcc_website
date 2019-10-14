@@ -23,9 +23,9 @@ export class ContentFilesComponent implements OnInit {
     @Input() pageContent: PageContent;
     @Input() fileContent: FileContent;
 
-    @ViewChild('uploadPdfDialog') uploadPdfDialog: ElementRef;
-    @ViewChild('uploadBulletinDialog') uploadBulletinDialog: ElementRef;
-    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
+    @ViewChild('uploadPdfDialog', { static: false }) uploadPdfDialog: ElementRef;
+    @ViewChild('uploadBulletinDialog', { static: false }) uploadBulletinDialog: ElementRef;
+    @ViewChild('confirmationDialog', { static: false }) confirmDialog: ElementRef;
     modalRef: BsModalRef;
     confirmModel: Confirm;
 

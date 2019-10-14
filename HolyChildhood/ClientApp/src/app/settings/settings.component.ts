@@ -18,10 +18,10 @@ import { EventType } from '../shared/models/calendar';
 })
 export class SettingsComponent implements OnInit {
 
-    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
-    @ViewChild('userDialog') userDialog: ElementRef;
-    @ViewChild('changePasswordDialog') changePasswordDialog: ElementRef;
-    @ViewChild('eventTypeDialog') eventTypeDialog: ElementRef;
+    @ViewChild('confirmationDialog', { static: true }) confirmDialog: ElementRef;
+    @ViewChild('userDialog', { static: true }) userDialog: ElementRef;
+    @ViewChild('changePasswordDialog', { static: true }) changePasswordDialog: ElementRef;
+    @ViewChild('eventTypeDialog', { static: true }) eventTypeDialog: ElementRef;
     modalRef: BsModalRef;
     confirmModel: Confirm;
 

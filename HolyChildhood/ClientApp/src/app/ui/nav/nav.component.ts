@@ -15,9 +15,9 @@ import { Confirm } from '../../shared/models/confirm';
 })
 export class NavComponent implements OnInit {
 
-    @ViewChild('pageDialog') pageDialog: ElementRef;
-    @ViewChild('menuDialog') menuDialog: ElementRef;
-    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
+    @ViewChild('pageDialog', { static: false }) pageDialog: ElementRef;
+    @ViewChild('menuDialog', { static: false }) menuDialog: ElementRef;
+    @ViewChild('confirmationDialog', { static: false }) confirmDialog: ElementRef;
     modalRef: BsModalRef;
     confirmModel: Confirm;
 

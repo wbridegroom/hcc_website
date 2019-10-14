@@ -20,8 +20,8 @@ export class ContentTabsComponent {
     @Input() tabContent: TabContent;
     @Input() pageContent: PageContent;
 
-    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
-    @ViewChild('tabDialog') tabDialog: ElementRef;
+    @ViewChild('confirmationDialog', { static: false }) confirmDialog: ElementRef;
+    @ViewChild('tabDialog', { static: false }) tabDialog: ElementRef;
     modalRef: BsModalRef;
     confirmModel: Confirm;
 

@@ -26,8 +26,8 @@ export class ContentCalendarComponent implements OnInit {
     @Input() pageContent: PageContent;
     @Input() calendarContent: CalendarContent;
 
-    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
-    @ViewChild('addEventDialog') addEventDialog: ElementRef;
+    @ViewChild('confirmationDialog', { static: true }) confirmDialog: ElementRef;
+    @ViewChild('addEventDialog', { static: true }) addEventDialog: ElementRef;
     modalRef: BsModalRef;
     confirmModel: Confirm;
 

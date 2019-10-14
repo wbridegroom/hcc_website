@@ -14,8 +14,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 })
 export class ProfileComponent implements OnInit {
 
-    @ViewChild('userDialog') userDialog: ElementRef;
-    @ViewChild('changePasswordDialog') changePasswordDialog: ElementRef;
+    @ViewChild('userDialog', { static: true }) userDialog: ElementRef;
+    @ViewChild('changePasswordDialog', { static: true }) changePasswordDialog: ElementRef;
     modalRef: BsModalRef;
 
     user: User;

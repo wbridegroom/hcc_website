@@ -18,10 +18,10 @@ import { NavService } from '../../shared/services/nav.service';
 })
 export class PageComponent implements OnInit {
 
-    @ViewChild('confirmationDialog') confirmDialog: ElementRef;
-    @ViewChild('editPageDialog') editPageDialog: ElementRef;
-    @ViewChild('pdfTypeDialog') pdfTypeDialog: ElementRef;
-    @ViewChild('addSubPageDialog') addSubPageDialog: ElementRef;
+    @ViewChild('confirmationDialog', { static: false }) confirmDialog: ElementRef;
+    @ViewChild('editPageDialog', { static: false }) editPageDialog: ElementRef;
+    @ViewChild('pdfTypeDialog', { static: false }) pdfTypeDialog: ElementRef;
+    @ViewChild('addSubPageDialog', { static: false }) addSubPageDialog: ElementRef;
     modalRef: BsModalRef;
     confirmModel: Confirm;
 
