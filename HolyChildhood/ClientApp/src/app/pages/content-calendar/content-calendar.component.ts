@@ -15,6 +15,8 @@ import * as moment from 'moment';
 import { Confirm } from '../../shared/models/confirm';
 import { Event } from '../../shared/models/calendar';
 
+import dayGridPlugin from '@fullcalendar/daygrid';
+
 @Component({
     selector: 'app-content-calendar',
     templateUrl: './content-calendar.component.html',
@@ -32,13 +34,17 @@ export class ContentCalendarComponent implements OnInit {
     confirmModel: Confirm;
 
     event: Event;
-
     eventTypes: SelectItem[];
     recurrenceTypes: SelectItem[];
     monthlyWeeks: SelectItem[];
     daysOfTheWeek: SelectItem[];
 
     defaultDate: Date;
+
+    calendarPlugins = [dayGridPlugin];
+    eventSources = [
+        { events: (info, success) => this.getEvents(info, success) }
+    ];
 
     constructor(private authService: AuthService,
                 private pagesService: PagesService,
@@ -81,17 +87,17 @@ export class ContentCalendarComponent implements OnInit {
     }
 
     ngOnInit() {
-        $('#calendar').fullCalendar({
-            themeSystem: 'bootstrap4',
-            header: {
-                left: 'title',
-                center: '',
-                right: 'today month,listMonth prev,next'
-            },
-            events: (start, end, timezone, callback) => this.getEvents(start, end, callback),
-            eventRender: (event, element) => this.renderEvent(event, element),
-            eventClick: (event) => this.onClick(event)
-        });
+        // $('#calendar').fullCalendar({
+        //     themeSystem: 'bootstrap4',
+        //     header: {
+        //         left: 'title',
+        //         center: '',
+        //         right: 'today month,listMonth prev,next'
+        //     },
+        //     events: (start, end, timezone, callback) => this.getEvents(start, end, callback),
+        //     eventRender: (event, element) => this.renderEvent(event, element),
+        //     eventClick: (event) => this.onClick(event)
+        // });
     }
 
     updateDefault() {
@@ -101,10 +107,19 @@ export class ContentCalendarComponent implements OnInit {
         }
     }
 
-    getEvents(start, end, success) {
-        this.http.get(`/api/event/${start.toISOString()}/${end.toISOString()}`).subscribe(events => {
+    async getEvents(info, success) {
+        console.log('Get Events');
+        console.log(info);
+        console.log(this);
+
+        // const response = await fetch(`/api/event/${info.start.toISOString()}/${info.end.toISOString()}`);
+        // const json = await response.json();
+        // success(json);
+        this.http.get(`/api/event/${info.start.toISOString()}/${info.end.toISOString()}`).subscribe(events => {
+            console.log(events);
             success(events);
         });
+
     }
 
     showDialog(dialog) {
@@ -155,22 +170,23 @@ export class ContentCalendarComponent implements OnInit {
     }
 
     editEvent(calEvent) {
+        console.log(calEvent);
         const startDate = new Date(
-            calEvent.start.year(),
-            calEvent.start.month(),
-            calEvent.start.date(),
-            calEvent.start.hours(),
-            calEvent.start.minutes(),
+            calEvent.start.getYear(),
+            calEvent.start.getMonth(),
+            calEvent.start.getDate(),
+            calEvent.start.getHours(),
+            calEvent.start.getMinutes(),
             0
         );
         let endDate = null;
         if (calEvent.end != null) {
             endDate = new Date(
-                calEvent.end.year(),
-                calEvent.end.month(),
-                calEvent.end.date(),
-                calEvent.end.hours(),
-                calEvent.end.minutes(),
+                calEvent.end.getYear(),
+                calEvent.end.getMonth(),
+                calEvent.end.getDate(),
+                calEvent.end.getHours(),
+                calEvent.end.getMinutes(),
                 0
             );
         }

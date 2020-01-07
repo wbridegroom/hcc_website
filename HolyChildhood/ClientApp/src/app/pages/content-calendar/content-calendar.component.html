@@ -110,7 +110,8 @@
         <i class="fas fa-plus"></i> Add Event
     </button>
 
-    <div id='calendar'></div>
+<!--    <div id='calendar'></div>-->
+    <full-calendar defaultView="dayGridMonth"  [plugins]="calendarPlugins"  [eventSources]="eventSources" (eventClick)="editEvent($event.event)"></full-calendar>
 
     <div class="adminPanel" *ngIf="isEditOn()">
         <button class="btn btn-sm btn-danger adminButton" (click)="pageComponent.deleteContent(pageContent.id)">

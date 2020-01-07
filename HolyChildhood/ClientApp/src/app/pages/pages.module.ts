@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FullCalendarModule} from '@fullcalendar/angular';
 
 import { ModalModule } from 'ngx-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap';
@@ -72,7 +73,8 @@ import 'jquery';
         MatFormFieldModule,
         MatRadioModule,
         MatListModule,
-        NgxMaskModule.forRoot()
+        NgxMaskModule.forRoot(),
+        FullCalendarModule,
     ],
     providers: [
         PagesService,
