@@ -115,7 +115,8 @@ namespace HolyChildhood
                 if (env.IsDevelopment())
                 {
                     // spa.UseAngularCliServer(npmScript: "start");
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                    //spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                    spa.UseProxyToSpaDevelopmentServer("httP://localhost:3000");
                 }
             });
 
