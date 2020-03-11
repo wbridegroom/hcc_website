@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,6 +12,10 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Toolbar from '@material-ui/core/Toolbar';
 import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
 import MenuIcon from '@material-ui/icons/Menu';
+import AppState from "../../stores/AppState";
+import {observer} from "mobx-react";
+import Divider from "@material-ui/core/Divider";
+import Switch from "@material-ui/core/Switch";
 
 const style = makeStyles(theme => ({
     toolbar: {
@@ -46,7 +50,7 @@ const style = makeStyles(theme => ({
             color: "gold",
             backgroundColor: theme.palette.primary.dark
         }
-    }
+    },
 }));
 
 interface Menu {
@@ -75,16 +79,18 @@ const NavMenu = withStyles(theme => ({
     />
 ));
 
-const Nav: React.FC = () => {
+const Nav: React.FC = observer(() => {
     const classes = style();
+    const store = useContext(AppState);
 
     const [menus, setMenus] = React.useState<Menu[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
+    const { auth, logout } = store.domainStore.authStore;
+
     useEffect(() => {
-            axios.get("/api/menu").then(response => {
+        axios.get("/api/menu").then(response => {
                 setMenus(response.data);
-                console.log(response.data);
             })
         },[]
     );
@@ -95,6 +101,11 @@ const Nav: React.FC = () => {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        handleClose();
+        logout();
     };
 
     return (
@@ -133,7 +144,33 @@ const Nav: React.FC = () => {
                     ))}
 
                     <div style={{ flexGrow: 1}} />
-                    <Button variant='outlined' style={{ color: 'white'}}>Login</Button>
+                    {!auth.token &&
+                        <Button component={Link} to="/login" className={classes.button}>
+                            <FontAwesomeIcon icon={'sign-in-alt'} />&nbsp;Login
+                        </Button>
+                    }
+                    {auth.token &&
+                        <div>
+                            <Button id='userMenu' onClick={handleMenuOpen} className={classes.button}>
+                                <FontAwesomeIcon icon={'user'} />&nbsp; {auth.fullName} <ArrowDropDown />
+                            </Button>
+                            <NavMenu anchorEl={anchorEl} open={anchorEl !== null && anchorEl.id === 'userMenu'} onClose={handleClose}>
+                                <MenuItem className={classes.menuItem}>
+                                    <FontAwesomeIcon icon={'user-cog'} />&nbsp;User Profile
+                                </MenuItem>
+                                <MenuItem className={classes.menuItem}>
+                                    <FontAwesomeIcon icon={'cogs'} />&nbsp;Settings
+                                </MenuItem>
+                                <MenuItem className={classes.menuItem}>
+                                    <FontAwesomeIcon icon={'edit'} />&nbsp;Edit <Switch color='secondary' /> Off
+                                </MenuItem>
+                                <Divider light style={{ backgroundColor: 'white'}} />
+                                <MenuItem onClick={handleLogout} className={classes.menuItem}>
+                                    <FontAwesomeIcon icon={'sign-out-alt'} />&nbsp;Logout
+                                </MenuItem>
+                            </NavMenu>
+                        </div>
+                    }
                 </Toolbar>
             </div>
             <div className={classes.menuContainer}>
@@ -142,12 +179,21 @@ const Nav: React.FC = () => {
                         <MenuIcon />
                     </IconButton>
                     <div style={{ flexGrow: 1}} />
-                    <Button className={classes.button}>Login</Button>
+                    {!auth.token &&
+                        <Button className={classes.button} component={Link} to="/login">
+                            <FontAwesomeIcon icon={'sign-in-alt'} />&nbsp;Login
+                        </Button>
+                    }
+                    {auth.token &&
+                        <Button className={classes.button} onClick={handleLogout}>
+                            <FontAwesomeIcon icon={'sign-out-alt'} />&nbsp;Logout
+                        </Button>
+                    }
                 </Toolbar>
             </div>
 
         </AppBar>
     )
-};
+});
 
 export default Nav;

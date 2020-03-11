@@ -50,7 +50,7 @@ const Home: React.FC = () => {
             </div>
             <Grid container direction="column" style={{padding: "15px"}}>
                 <Grid item>
-                    <Typography variant="h2" style={{marginBottom: ".5rem"}}>
+                    <Typography variant="h2" style={{marginBottom: ".5rem" }}>
                         Our Mission
                     </Typography>
                     <Typography variant="body1">

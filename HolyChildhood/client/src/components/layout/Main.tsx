@@ -3,6 +3,7 @@ import {Route, RouteComponentProps} from "react-router-dom";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Home from "../Home";
 import Page from "../Page";
+import Login from "../Login";
 
 
 const style = makeStyles(theme => ({
@@ -35,6 +36,7 @@ const Main: React.FC = () => {
     return (
         <div className={classes.root}>
             <Route exact path="/" component={Home} />
+            <Route path="/login" component={Login} />
             <Route path="/home" component={Home} />
             <Route path="/page/:id" component={({match}: RouteComponentProps<TParams>) => <Page id={match.params.id} />} />
         </div>

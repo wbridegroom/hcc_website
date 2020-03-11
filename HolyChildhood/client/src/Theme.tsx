@@ -7,6 +7,10 @@ const hccDefault = createMuiTheme({
             main: '#1f3e65',
             dark: '#0d1d32',
             contrastText: '#fff'
+        },
+        secondary: {
+            main: '#007ad9',
+            dark: '#1f3e65'
         }
     },
     typography: {
