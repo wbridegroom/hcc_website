@@ -1,5 +1,6 @@
 import {action, observable} from "mobx";
 import axios from 'axios';
+import {Auth} from "../../models/Auth";
 
 export class AuthStore {
     @observable
@@ -26,10 +27,4 @@ export class AuthStore {
 
 }
 
-export interface Auth {
-    token: string;
-    expiration: number;
-    userName: string;
-    fullName: string;
-    roles: string[];
-}
+
