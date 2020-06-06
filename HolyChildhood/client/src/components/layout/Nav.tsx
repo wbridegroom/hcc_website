@@ -1,6 +1,5 @@
 import React, {useContext, useEffect} from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -16,6 +15,10 @@ import AppState from "../../stores/AppState";
 import {observer} from "mobx-react";
 import Divider from "@material-ui/core/Divider";
 import Switch from "@material-ui/core/Switch";
+import AddPage from "./navactions/AddPage";
+import AddMenu from "./navactions/AddMenu";
+import DeleteMenu from "./navactions/DeleteMenu";
+import EditMenu from "./navactions/EditMenu";
 
 const style = makeStyles(theme => ({
     toolbar: {
@@ -49,8 +52,17 @@ const style = makeStyles(theme => ({
         '&:hover': {
             color: "gold",
             backgroundColor: theme.palette.primary.dark
-        }
+        },
+        padding: "4px 24px",
     },
+    icon: {
+        marginRight: theme.spacing(1)
+    },
+    divider: {
+        backgroundColor: 'white',
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1)
+    }
 }));
 
 interface Menu {
@@ -79,21 +91,19 @@ const NavMenu = withStyles(theme => ({
     />
 ));
 
-const Nav: React.FC = observer(() => {
+function Nav() {
     const classes = style();
     const store = useContext(AppState);
 
-    const [menus, setMenus] = React.useState<Menu[]>([]);
+    const { menus, loadMenu } = store.domainStore.navStore;
+    const { selectedMenu, setSelectedMenu } = store.uiState;
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [open, setOpen] = React.useState('');
 
-    const { auth, logout } = store.domainStore.authStore;
+    const { auth, logout, edit, setEdit, isAdministrator, isEditor } = store.domainStore.authStore;
 
-    useEffect(() => {
-        axios.get("/api/menu").then(response => {
-                setMenus(response.data);
-            })
-        },[]
-    );
+    useEffect(() => {loadMenu().finally()},[loadMenu]);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -107,6 +117,17 @@ const Nav: React.FC = observer(() => {
         handleClose();
         logout();
     };
+
+    function openDialog(dialogName: string, menu: any) {
+        setSelectedMenu(JSON.parse(JSON.stringify(menu)));
+        setOpen(dialogName);
+        handleClose();
+    }
+
+    function closeDialog() {
+        setSelectedMenu(null);
+        setOpen('');
+    }
 
     return (
         <AppBar position="static">
@@ -138,10 +159,40 @@ const Nav: React.FC = observer(() => {
                                         {page.title}
                                     </MenuItem>
                                 ))}
+                                {isAdministrator && edit &&
+                                    <div>
+                                        <Divider light className={classes.divider} />
+                                        <MenuItem className={classes.menuItem} onClick={() => openDialog('addpage', menu)}>
+                                            <FontAwesomeIcon icon={'plus'} className={classes.icon} /><i>Add Page...</i>
+                                        </MenuItem>
+                                        <MenuItem className={classes.menuItem} onClick={() => openDialog('editmenu', menu)}>
+                                            <FontAwesomeIcon icon={'pencil-alt'} className={classes.icon} /><i>Edit Menu...</i>
+                                        </MenuItem>
+                                        {menu  && menu.pages.length === 0 &&
+                                            <MenuItem className={classes.menuItem} onClick={() => openDialog('delete', menu)}>
+                                                <FontAwesomeIcon icon={'trash'} className={classes.icon} /><i>Delete Menu</i>
+                                            </MenuItem>
+                                        }
+
+                                    </div>
+                                }
                             </NavMenu>
 
                         </div>
                     ))}
+                    {isAdministrator && edit &&
+                        <span>
+                            <AddMenu />
+                            {selectedMenu &&
+                                <span>
+                                    <AddPage open={open === 'addpage'} menu={selectedMenu} handleClose={closeDialog} />
+                                    <EditMenu open={open === 'editmenu'} menu={selectedMenu} handleClose={closeDialog} />
+                                    <DeleteMenu open={open === 'delete'} menu={selectedMenu} handleClose={closeDialog} />
+                                </span>
+                            }
+                        </span>
+
+                    }
 
                     <div style={{ flexGrow: 1}} />
                     {!auth.token &&
@@ -158,13 +209,19 @@ const Nav: React.FC = observer(() => {
                                 <MenuItem className={classes.menuItem}>
                                     <FontAwesomeIcon icon={'user-cog'} />&nbsp;User Profile
                                 </MenuItem>
-                                <MenuItem className={classes.menuItem}>
-                                    <FontAwesomeIcon icon={'cogs'} />&nbsp;Settings
-                                </MenuItem>
-                                <MenuItem className={classes.menuItem}>
-                                    <FontAwesomeIcon icon={'edit'} />&nbsp;Edit <Switch color='secondary' /> Off
-                                </MenuItem>
-                                <Divider light style={{ backgroundColor: 'white'}} />
+                                {isAdministrator &&
+                                    <MenuItem className={classes.menuItem}>
+                                        <FontAwesomeIcon icon={'cogs'} />&nbsp;Settings
+                                    </MenuItem>
+                                }
+                                {(isAdministrator || isEditor) &&
+                                    <MenuItem className={classes.menuItem}>
+                                        <FontAwesomeIcon icon={'edit'}/>&nbsp;Edit
+                                        <Switch color='secondary' checked={edit} onChange={() => setEdit(!edit)}/>
+                                        {edit ? ' ON' : ' OFF'}
+                                    </MenuItem>
+                                }
+                                <Divider light className={classes.divider} />
                                 <MenuItem onClick={handleLogout} className={classes.menuItem}>
                                     <FontAwesomeIcon icon={'sign-out-alt'} />&nbsp;Logout
                                 </MenuItem>
@@ -194,6 +251,6 @@ const Nav: React.FC = observer(() => {
 
         </AppBar>
     )
-});
+}
 
-export default Nav;
+export default observer(Nav);

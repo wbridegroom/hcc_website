@@ -9,19 +9,15 @@ const hccDefault = createMuiTheme({
             contrastText: '#fff'
         },
         secondary: {
-            main: '#007ad9',
-            dark: '#1f3e65'
+            light: '#ffdf33',
+            main: '#ffd700',
+            dark: '#b29600'
         }
     },
     typography: {
         h2: {
             fontFamily: 'inherit',
             fontSize: '2rem',
-            fontWeight: 500
-        },
-        h6: {
-            fontFamily: 'inherit',
-            fontSize: '1rem',
             fontWeight: 500
         },
         body1: {

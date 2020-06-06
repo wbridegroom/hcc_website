@@ -67,20 +67,21 @@ namespace HolyChildhood.Controllers
                 };
 
                 var tokenExpirationMins = config.GetValue<int>("Auth:Jwt:TokenExpirationInMinutes");
+                var expiration = now.Add(TimeSpan.FromMinutes(tokenExpirationMins));
                 var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Auth:Jwt:Key"]));
                 var token = new JwtSecurityToken(
                     issuer: config["Auth:Jwt:Issuer"],
                     audience: config["Auth:Jwt:Audience"],
                     claims: claims,
                     notBefore: now,
-                    expires: now.Add(TimeSpan.FromMinutes(tokenExpirationMins)),
+                    expires: expiration,
                     signingCredentials: new SigningCredentials(issuerSigningKey, SecurityAlgorithms.HmacSha256)
                 );
                 var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
                 var response = new TokenResponseViewModel
                 {
                     Token = encodedToken,
-                    Expiration = tokenExpirationMins,
+                    Expiration = expiration.ToString("yyyy-MM-ddTHH:mm:ss.000"),
                     UserName = user.UserName,
                     FullName = $"{user.FirstName} {user.LastName}",
                     Roles = roles.ToArray<string>()

@@ -10,8 +10,8 @@ import Nav from "./Nav";
 const style = makeStyles(theme => ({
     root: {
         width: '100%',
-        paddingRight: "15px",
-        paddingLeft: "15px",
+        //paddingRight: "15px",
+        //paddingLeft: "15px",
         marginRight: "auto",
         marginLeft: "auto",
         [theme.breakpoints.down('xs')]: {
@@ -52,6 +52,10 @@ const style = makeStyles(theme => ({
         color: theme.palette.primary.contrastText,
         marginTop: "-3px"
     },
+    subtitle: {
+        fontSize: '1rem',
+        fontWeight: 500
+    },
     logo: {
         height: "65px",
         width: "65px",
@@ -74,7 +78,7 @@ const Header: React.FC = () => {
                         </Grid>
                         <Grid item sm={12} md={8} style={{ textAlign: "left"}}>
                             <Typography variant='h2'>Holy Childhood of Jesus</Typography>
-                            <Typography variant='h6'>Catholic Church - Mascoutah, IL</Typography>
+                            <Typography className={classes.subtitle}>Catholic Church - Mascoutah, IL</Typography>
                         </Grid>
                         <Grid item sm={12} md={3} style={{ textAlign: "left"}}>
                             <FontAwesomeIcon icon={'phone'} /> (618) 566-2958
