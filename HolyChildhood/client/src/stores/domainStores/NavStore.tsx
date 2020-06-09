@@ -3,7 +3,7 @@ import axios from 'axios';
 import {Menu} from "../../models/Menu";
 import {DomainStore} from "../DomainStore";
 
-const baseUrl = 'https://www.holychildhoodchurch.com';
+const baseUrl = 'http://localhost:57084';
 
 export class NavStore {
 

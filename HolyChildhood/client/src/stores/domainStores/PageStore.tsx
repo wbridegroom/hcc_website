@@ -4,7 +4,7 @@ import {Page} from "../../models/Page";
 import {DomainStore} from "../DomainStore";
 import {Menu} from "../../models/Menu";
 
-const baseUrl = 'https://www.holychildhoodchurch.com';
+const baseUrl = 'http://localhost:57084';
 
 export class PageStore {
 

@@ -14,9 +14,14 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 import { faBan } from '@fortawesome/free-solid-svg-icons/faBan';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp';
 import { faChevronDoubleUp } from "@fortawesome/pro-solid-svg-icons/faChevronDoubleUp";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { faChevronDoubleDown } from "@fortawesome/pro-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown";
+import { faChevronDoubleDown } from "@fortawesome/pro-solid-svg-icons/faChevronDoubleDown";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import { faFileUpload } from "@fortawesome/free-solid-svg-icons/faFileUpload";
+import { faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons/faExternalLinkAlt";
+import { faArrowUp } from "@fortawesome/free-solid-svg-icons/faArrowUp";
+import { faArrowDown } from "@fortawesome/free-solid-svg-icons/faArrowDown";
+import { faSave } from "@fortawesome/free-solid-svg-icons/faSave";
 
 export default class Icons {
     constructor() {
@@ -38,7 +43,12 @@ export default class Icons {
             faChevronDoubleUp,
             faChevronDown,
             faChevronDoubleDown,
-            faCaretDown
+            faCaretDown,
+            faFileUpload,
+            faExternalLinkAlt,
+            faArrowUp,
+            faArrowDown,
+            faSave,
         );
     }
 }

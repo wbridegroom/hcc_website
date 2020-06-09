@@ -10,7 +10,8 @@ const BlueFab = withStyles({
         '&:hover': {
             backgroundColor: blue[700],
         },
-        height: 28
+        height: 26,
+        textTransform: "none"
     }
 })(Fab);
 

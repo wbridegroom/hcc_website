@@ -1,6 +1,6 @@
 import {Page} from "./Page";
 import {Calendar} from "./Calendar";
-import {Pdf} from "./File";
+import {File} from "./File";
 
 export interface PageContent {
     id: number;
@@ -46,7 +46,7 @@ export interface FileContent {
     id: number;
     title: string;
     fileType: string;
-    files: Pdf[];
+    files: File[];
 }
 
 export interface FormContent {

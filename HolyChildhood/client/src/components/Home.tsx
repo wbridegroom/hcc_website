@@ -8,6 +8,7 @@ import {TextContent} from "../models/PageContent";
 import {Event} from "../models/Calendar";
 import TextContentControl from "./content/TextContentControl";
 import past2future from "../images/Past2Future.jpg";
+import {observer} from "mobx-react";
 
 const style = makeStyles(theme => ({
     image: {
@@ -88,14 +89,14 @@ function Home() {
                 </Grid>
                 <Grid item>
                     {mainContent &&
-                        <TextContentControl content={mainContent} />
+                        <TextContentControl textContent={mainContent} />
                     }
                 </Grid>
                 <Grid item>
                     <Grid container direction="row" spacing={4}>
                         <Grid item xs={8}>
                             {scheduleContent &&
-                                <TextContentControl content={scheduleContent} />
+                                <TextContentControl textContent={scheduleContent} />
                             }
                         </Grid>
                         <Grid item xs={4}>
@@ -112,7 +113,7 @@ function Home() {
                     <Grid container direction="row" spacing={4}>
                         <Grid item xs={8}>
                             {contactContent &&
-                                <TextContentControl content={contactContent} />
+                                <TextContentControl textContent={contactContent} />
                             }
                         </Grid>
                         <Grid item xs={4}>
@@ -127,4 +128,4 @@ function Home() {
     )
 }
 
-export default Home;
+export default observer(Home);

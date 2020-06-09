@@ -21,6 +21,7 @@ import FormContentControl from "./content/FormContentControl";
 import Paper from "@material-ui/core/Paper";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PageAdminPanel from "./page/PageAdminPanel";
+import classNames from 'classnames';
 
 const style = makeStyles(theme => ({
     contentContainer: {
@@ -34,6 +35,7 @@ const style = makeStyles(theme => ({
         margin: theme.spacing(1)
     },
     content: {
+        padding: 1,
         marginBottom: theme.spacing(1)
     },
     cardHeaderRoot: {
@@ -52,12 +54,23 @@ const style = makeStyles(theme => ({
     homeIcon: {
         color: '#007ad9'
     },
+    edit: {
+        '&:hover': {
+            padding: 0,
+            border: '1px dashed'
+        }
+    }
 }));
 
-const Page: React.FC<{ id: string}> = observer (({id}) => {
+interface PageProps {
+    id: string;
+}
+
+function Page(props: PageProps) {
 
     const classes = style();
     const store = useContext(AppState);
+    const { id } = props;
     const { page, loadPage } = store.domainStore.pageStore;
     const { edit, isAdministrator, isEditor } = store.domainStore.authStore;
 
@@ -109,21 +122,21 @@ const Page: React.FC<{ id: string}> = observer (({id}) => {
                     }
                     <Grid item xs={12} sm={hasChildren ? 9 : 12}>
                         {page && page.pageContents && page.pageContents.map(content => (
-                            <div key={content.id} className={classes.content}>
+                            <div key={content.id} className={classNames(classes.content, {[classes.edit]: edit})}>
                                 {content.contentType === "Text" &&
-                                    <TextContentControl content={content.textContent} />
+                                    <TextContentControl textContent={content.textContent} pageContent={content} />
                                 }
                                 {content.contentType === "Calendar" &&
-                                    <CalendarContentControl />
+                                    <CalendarContentControl pageContent={content} />
                                 }
                                 {content.contentType === "Tabs" &&
-                                    <TabContentControl />
+                                    <TabContentControl pageContent={content} />
                                 }
                                 {content.contentType === "Files" &&
-                                    <FileContentControl />
+                                    <FileContentControl pageContent={content} />
                                 }
                                 {content.contentType === "Form" &&
-                                    <FormContentControl />
+                                    <FormContentControl pageContent={content} />
                                 }
                             </div>
                         ))}
@@ -132,6 +145,6 @@ const Page: React.FC<{ id: string}> = observer (({id}) => {
             </div>
         </div>
     )
-});
+}
 
-export default Page;
+export default observer(Page);

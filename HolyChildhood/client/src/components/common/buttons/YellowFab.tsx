@@ -1,17 +1,17 @@
 import withStyles from "@material-ui/core/styles/withStyles";
-import green from "@material-ui/core/colors/green";
 import Fab from "@material-ui/core/Fab";
+import amber from "@material-ui/core/colors/amber";
 
-const GreenFab = withStyles({
+const YellowFab = withStyles({
     root: {
-        color: '#fff',
-        backgroundColor: green[600],
+        color: '#000',
+        backgroundColor: amber[600],
         '&:hover': {
-            backgroundColor: green[700],
+            backgroundColor: amber[700],
         },
         height: 26,
         textTransform: "none"
     }
 })(Fab);
 
-export default GreenFab;
+export default YellowFab;

@@ -4,6 +4,7 @@ import {PageStore} from "./domainStores/PageStore";
 import {NavStore} from "./domainStores/NavStore";
 import {ContentStore} from "./domainStores/ContentStore";
 import {EventStore} from "./domainStores/EventStore";
+import {FileStore} from "./domainStores/FileStore";
 
 export class DomainStore {
     appState: AppState;
@@ -12,6 +13,7 @@ export class DomainStore {
     navStore: NavStore;
     contentStore: ContentStore;
     eventStore: EventStore;
+    fileStore: FileStore;
 
     constructor(appState: AppState) {
         this.appState = appState;
@@ -20,6 +22,7 @@ export class DomainStore {
         this.navStore = new NavStore(this);
         this.contentStore = new ContentStore(this);
         this.eventStore = new EventStore(this);
+        this.fileStore = new FileStore(this);
     }
 
     static getConfig() {

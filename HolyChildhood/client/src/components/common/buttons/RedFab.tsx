@@ -9,7 +9,8 @@ const RedFab = withStyles({
         '&:hover': {
             backgroundColor: red[700],
         },
-        height: 28
+        height: 26,
+        textTransform: "none"
     }
 })(Fab);
 

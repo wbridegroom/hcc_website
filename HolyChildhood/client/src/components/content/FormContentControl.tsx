@@ -1,12 +1,20 @@
 import React from 'react';
+import {PageContent} from "../../models/PageContent";
+import ContentAdminPanel from "./ContentAdminPanel";
 
-const FormContentControl: React.FC = () => {
+interface FormContentControlProps {
+    pageContent: PageContent;
+}
+
+function FormContentControl(props: FormContentControlProps) {
+    const { pageContent } = props;
 
     return(
         <div>
             "Form Control"
+            <ContentAdminPanel pageContent={pageContent} />
         </div>
     )
-};
+}
 
 export default FormContentControl;

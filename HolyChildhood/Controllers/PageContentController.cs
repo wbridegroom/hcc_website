@@ -107,6 +107,7 @@ namespace HolyChildhood.Controllers
         {
             var page = await dbContext.Pages.Include(p => p.PageContents).FirstOrDefaultAsync(p => p.Id == pageContent.Page.Id);
             if (page == null) return NotFound();
+            pageContent.Page = page;
 
             // Find max Index
             var index = 0;

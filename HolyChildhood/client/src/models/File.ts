@@ -1,4 +1,4 @@
-export interface Pdf {
+export interface File {
     id: number;
     title: string;
     type: string;

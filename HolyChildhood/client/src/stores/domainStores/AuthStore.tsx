@@ -2,7 +2,7 @@ import {action, computed, observable, reaction} from "mobx";
 import axios from 'axios';
 import {Auth} from "../../models/Auth";
 
-const baseUrl = 'https://www.holychildhoodchurch.com';
+const baseUrl = 'http://localhost:57084';
 
 export class AuthStore {
     @observable

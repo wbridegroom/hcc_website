@@ -3,7 +3,7 @@ import {action} from "mobx";
 import axios from 'axios';
 import {Event} from '../../models/Calendar';
 
-const baseUrl = 'https://www.holychildhoodchurch.com';
+const baseUrl = 'http://localhost:57084';
 
 export class EventStore {
     domainStore: DomainStore;
